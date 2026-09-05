@@ -1,2 +1,2 @@
-# SIH2026-MINE-X
+# SIH2026-MineX
 
