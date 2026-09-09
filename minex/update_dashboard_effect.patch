@@ -1,0 +1,43 @@
+--- app/dashboard/page.tsx
++++ app/dashboard/page.tsx
+@@ -51,8 +51,39 @@
+   const [collapsed, setCollapsed] = useState(false);
+   const [state, setState] = useState<DashboardState>(initialState);
+ 
++  // Live data fetching from actual Rover
++  useEffect(() => {
++    if (!state.isLive) return;
++    
++    const interval = setInterval(async () => {
++      try {
++        const res = await fetch(`${state.roverIp}/telemetry`, { cache: 'no-store' });
++        if (res.ok) {
++          const data = await res.json();
++          setState(prev => {
++            let gasLevel: "normal" | "warning" | "critical" = "normal";
++            if (data.gas.includes("UNHEALTHY") || data.gas.includes("HAZARDOUS")) gasLevel = "critical";
++            else if (data.gas.includes("MODERATE")) gasLevel = "warning";
++            
++            return {
++              ...prev,
++              temperature: data.temp,
++              humidity: data.hum,
++              heading: data.heading,
++              gasLevel: gasLevel,
++              connection: "connected"
++            };
++          });
++        }
++      } catch (err) {
++        setState(prev => ({ ...prev, connection: "offline" }));
++      }
++    }, 1000);
++    return () => clearInterval(interval);
++  }, [state.isLive, state.roverIp]);
++
+   // Live simulation tick
+   useEffect(() => {
+-    if (state.roverState === "emergency" || state.connection !== "connected") return;
++    if (state.isLive || state.roverState === "emergency" || state.connection !== "connected") return;
+ 
+     const interval = setInterval(() => {
