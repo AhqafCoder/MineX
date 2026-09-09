@@ -1,0 +1,60 @@
+--- components/dashboard/LiveMapPanel.tsx
++++ components/dashboard/LiveMapPanel.tsx
+@@ -12,14 +12,32 @@
+ export default function LiveMapPanel({ state }: Props) {
+   const [zoom, setZoom] = useState(1);
+   const [showLayers, setShowLayers] = useState({ lidar: true, route: true, hazards: true, humans: true, waypoints: true });
+   const [roverPos, setRoverPos] = useState({ x: 385, y: 290 });
+   const [lidarAngle, setLidarAngle] = useState(0);
++  const [slamPoints, setSlamPoints] = useState<{x: number, y: number}[]>([]);
++  const [slamOffset, setSlamOffset] = useState(0);
+   const animRef = useRef<number>(0);
+ 
+   useEffect(() => {
++    if (state.isLive) {
++      const interval = setInterval(async () => {
++        try {
++          const res = await fetch(`${state.roverIp}/slam_data`, { cache: 'no-store' });
++          if (res.ok) {
++            const data = await res.json();
++            setSlamPoints(data.points);
++            setSlamOffset(data.offset);
++          }
++        } catch (e) {}
++      }, 200);
++      return () => clearInterval(interval);
++    }
++  }, [state.isLive, state.roverIp]);
++
++  useEffect(() => {
+     let frame = 0;
+     const animate = () => {
+       frame++;
+@@ -107,7 +125,7 @@
+           <path d="M 40 240 Q 150 220 300 215 Q 420 215 560 230" fill="none" stroke="#ffffff" strokeWidth="90" strokeLinecap="round" />
+ 
+           {/* LiDAR points */}
+-          {showLayers.lidar && Array.from({ length: 120 }, (_, i) => {
++          {showLayers.lidar && !state.isLive && Array.from({ length: 120 }, (_, i) => {
+             const angle = (i / 120) * Math.PI * 2 + lidarAngle * Math.PI / 180;
+             const r = 50 + Math.random() * 80;
+             return (
+@@ -120,6 +138,18 @@
+               />
+             );
+           })}
++          
++          {/* Live SLAM points */}
++          {showLayers.lidar && state.isLive && slamPoints.map((p, i) => (
++            <rect
++              key={i}
++              x={roverPos.x + p.x * 0.9}
++              y={roverPos.y - (p.y + slamOffset) * 0.9}
++              width={2}
++              height={2}
++              fill="#39FF14"
++            />
++          ))}
+ 
+           {/* LiDAR sweep line */}
+           {showLayers.lidar && (
