@@ -9,11 +9,11 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recha
 import type { DashboardState } from "@/app/dashboard/page";
 
 const mockState: DashboardState = {
-  battery: 78, signal: 96, speed: 1.2, distance: 428, heading: 142,
-  direction: "N", motorTemp: 42, mode: "autonomous", connection: "connected", roverState: "active",
-  missionElapsed: 6138, humanDetected: true, humanConfidence: 94,
+  heading: 142,
+  direction: "N", mode: "autonomous", connection: "offline", roverState: "standby",
+  missionElapsed: 0,
   temperature: 31, humidity: 68, gasLevel: "normal", gas: "OFFLINE",
-  accelX: 0, accelY: 0, accelZ: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
+  accelX: 0, accelY: 0, accelZ: 0, pitch: 0, roll: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
 };
 
 const reportData = [

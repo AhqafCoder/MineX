@@ -18,7 +18,7 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
 
   const sendDrive = (x: number, y: number) => {
     if (!state.isLive) return;
-    fetch(`${state.roverIp}/drive`, {
+    fetch(`/api/rover/drive?ip=${encodeURIComponent(state.roverIp)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ x, y })
@@ -28,7 +28,7 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
   const toggleLight = async () => {
     if (!state.isLive) { setLightOn(!lightOn); return; }
     try {
-      const res = await fetch(`${state.roverIp}/toggle_light`, { method: 'POST' });
+      const res = await fetch(`/api/rover/light?ip=${encodeURIComponent(state.roverIp)}`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setLightOn(data.state);
@@ -38,7 +38,7 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
 
   const setPan = (val: number) => {
     if (!state.isLive) return;
-    fetch(`${state.roverIp}/servo`, {
+    fetch(`/api/rover/servo?ip=${encodeURIComponent(state.roverIp)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: val })
@@ -53,7 +53,7 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
 
   return (
     <div className={cn(
-      "bg-white rounded-3xl border shadow-sm",
+      "bg-white rounded-3xl border shadow-sm overflow-hidden h-full flex flex-col",
       isEmergency ? "border-gray-100" : "border-gray-100"
     )}>
       <div className={cn(
@@ -71,9 +71,9 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
         </div>
       </div>
 
-      <div className="p-5">
+      <div className="p-4 flex-1 overflow-y-auto">
         {/* Mode selector */}
-        <div className="flex bg-gray-50 rounded-xl p-1 mb-6 border border-gray-100">
+        <div className="flex bg-gray-50 rounded-xl p-1 mb-4 border border-gray-100">
           {modes.map((m) => (
             <button
               key={m.id}
@@ -92,7 +92,7 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
         </div>
 
         {/* D-Pad */}
-        <div className="relative w-40 h-40 mx-auto mb-6">
+        <div className="relative w-32 h-32 mx-auto mb-4">
           <div className="absolute inset-0 bg-gray-50 rounded-full border border-gray-100 shadow-inner" />
           
           <button 
@@ -100,8 +100,8 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
             onPointerDown={() => sendDrive(0, 1)}
             onPointerUp={() => sendDrive(0, 0)}
             onPointerLeave={() => sendDrive(0, 0)}
-            className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-12 bg-white border border-gray-100 rounded-t-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
-            <ArrowUp className="w-5 h-5 text-gray-500" />
+            className="absolute top-1.5 left-1/2 -translate-x-1/2 w-8 h-10 bg-white border border-gray-100 rounded-t-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
+            <ArrowUp className="w-4 h-4 text-gray-500" />
           </button>
           
           <button 
@@ -109,8 +109,8 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
             onPointerDown={() => sendDrive(0, -1)}
             onPointerUp={() => sendDrive(0, 0)}
             onPointerLeave={() => sendDrive(0, 0)}
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-12 bg-white border border-gray-100 rounded-b-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
-            <ArrowDown className="w-5 h-5 text-gray-500" />
+            className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-8 h-10 bg-white border border-gray-100 rounded-b-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
+            <ArrowDown className="w-4 h-4 text-gray-500" />
           </button>
           
           <button 
@@ -118,8 +118,8 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
             onPointerDown={() => sendDrive(-1, 0)}
             onPointerUp={() => sendDrive(0, 0)}
             onPointerLeave={() => sendDrive(0, 0)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-12 h-10 bg-white border border-gray-100 rounded-l-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
+            className="absolute left-1.5 top-1/2 -translate-y-1/2 w-10 h-8 bg-white border border-gray-100 rounded-l-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
+            <ArrowLeft className="w-4 h-4 text-gray-500" />
           </button>
           
           <button 
@@ -127,20 +127,21 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
             onPointerDown={() => sendDrive(1, 0)}
             onPointerUp={() => sendDrive(0, 0)}
             onPointerLeave={() => sendDrive(0, 0)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-10 bg-white border border-gray-100 rounded-r-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
-            <ArrowRight className="w-5 h-5 text-gray-500" />
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-8 bg-white border border-gray-100 rounded-r-xl hover:bg-gray-50 active:bg-gray-100 flex items-center justify-center disabled:opacity-50 shadow-sm transition-all active:scale-95">
+            <ArrowRight className="w-4 h-4 text-gray-500" />
           </button>
 
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-gray-100 border border-gray-100 rounded-full flex items-center justify-center shadow-inner">
-            <div className="w-4 h-4 bg-gray-300 rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gray-100 border border-gray-100 rounded-full flex items-center justify-center shadow-inner">
+            <div className="w-3 h-3 bg-gray-300 rounded-full" />
           </div>
         </div>
 
         {/* Camera Pan & Light */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-1 bg-gray-50 p-3 rounded-xl border border-gray-100">
-            <div className="flex justify-between text-xs mb-2">
-              <span className="text-gray-500 font-medium">Camera Pan</span>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="flex-1 bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+            <div className="flex justify-between text-[10px] mb-1.5">
+              <span className="text-gray-500 font-medium">CAM PAN</span>
+              <span className="text-gray-400">RESET</span>
             </div>
             <input 
               type="range" min="-1" max="1" step="0.05" defaultValue="0" 
@@ -151,33 +152,16 @@ export default function RoverControlPanel({ state, onEmergencyStop, onModeChange
               className="w-full accent-orange-500 disabled:opacity-50 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer" 
             />
           </div>
-          <button onClick={toggleLight} disabled={disabled} className={cn("p-3 border rounded-xl disabled:opacity-50 transition-colors shadow-sm", lightOn ? "bg-yellow-100 border-yellow-200 text-yellow-600" : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100")}>
-            <Lightbulb className="w-5 h-5" />
+          <button onClick={toggleLight} disabled={disabled} className={cn("p-2.5 border rounded-xl disabled:opacity-50 transition-colors shadow-sm", lightOn ? "bg-yellow-100 border-yellow-200 text-yellow-600" : "bg-gray-50 border-gray-100 text-gray-500 hover:bg-gray-100")}>
+            <Lightbulb className="w-4 h-4" />
           </button>
-        </div>
-
-        {/* Speed */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex-1 bg-gray-50 p-3 rounded-xl border border-gray-100">
-            <div className="flex justify-between text-xs mb-2">
-              <span className="text-gray-500 font-medium">Speed Limit</span>
-              <span className="font-bold text-gray-900">1.5 m/s</span>
-            </div>
-            <input 
-              type="range" 
-              min="0" max="100" 
-              defaultValue="60"
-              disabled={disabled}
-              className="w-full accent-green-500 disabled:opacity-50 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-            />
-          </div>
         </div>
 
         {/* E-Stop */}
         <button
           onClick={onEmergencyStop}
           className={cn(
-            "w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95",
+            "w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95 text-sm",
             isEmergency
               ? "bg-red-500 text-gray-900"
               : "bg-gray-50 text-red-600 hover:bg-gray-100 border border-gray-100"

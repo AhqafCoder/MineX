@@ -53,7 +53,7 @@ export default function RoverVisionPanel({ state }: Props) {
       </div>
 
       {/* Vision feed */}
-      <div className="relative flex-1 bg-gray-900 min-h-[250px]">
+      <div className="relative flex-1 bg-gray-900 min-h-[180px]">
         {state.isLive && !isOffline ? (
           <>
             <img 

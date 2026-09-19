@@ -8,11 +8,11 @@ import RoverVisionPanel from "@/components/dashboard/RoverVisionPanel";
 import type { DashboardState } from "@/app/dashboard/page";
 
 const mockState: DashboardState = {
-  battery: 78, signal: 96, speed: 1.2, distance: 428, heading: 142,
-  direction: "N", motorTemp: 42, mode: "autonomous", connection: "connected", roverState: "active",
-  missionElapsed: 6138, humanDetected: true, humanConfidence: 94,
+  heading: 142,
+  direction: "N", mode: "autonomous", connection: "offline", roverState: "standby",
+  missionElapsed: 0,
   temperature: 31, humidity: 68, gasLevel: "normal", gas: "OFFLINE",
-  accelX: 0, accelY: 0, accelZ: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
+  accelX: 0, accelY: 0, accelZ: 0, pitch: 0, roll: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
 };
 
 export default function VisionPage() {
@@ -37,68 +37,30 @@ export default function VisionPage() {
 
               {/* Detection stats */}
               <div className="space-y-4">
-                {/* Human detection */}
-                <div className="bg-white border border-gray-100 border border-[#ff3333]/30 p-4">
+                {/* AI Detection Notice */}
+                <div className="bg-white border border-gray-100 p-4 rounded-xl">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-mono text-xs text-[#ff3333] font-bold tracking-widest">HUMAN DETECTION</span>
+                    <span className="text-mono text-xs text-gray-500 font-bold tracking-widest">AI DETECTION</span>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#ff3333] animate-pulse" />
-                      <span className="text-mono text-xs text-[#ff3333] font-bold">DETECTED</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+                      <span className="text-mono text-xs text-gray-400 font-bold">NOT ACTIVE</span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <div className="text-mono text-xs text-[#4a5568]">Confidence</div>
-                      <div className="text-2xl font-bold text-[#ff3333]">{mockState.humanConfidence}%</div>
-                    </div>
-                    <div>
-                      <div className="text-mono text-xs text-[#4a5568]">Distance</div>
-                      <div className="text-2xl font-bold text-gray-900">8.4m</div>
-                    </div>
-                    <div>
-                      <div className="text-mono text-xs text-[#4a5568]">Class ID</div>
-                      <div className="text-mono text-sm font-bold text-[#ff3333]">Class 0</div>
-                    </div>
-                    <div>
-                      <div className="text-mono text-xs text-[#4a5568]">Zone</div>
-                      <div className="text-mono text-sm text-gray-900">Tunnel B-04</div>
-                    </div>
-                  </div>
-                  <div className="h-1 bg-white mt-3">
-                    <div className="h-full bg-[#ff3333]" style={{ width: `${mockState.humanConfidence}%` }} />
-                  </div>
-                </div>
-
-                {/* Cell phone */}
-                <div className="bg-white border border-gray-100 border border-[#ffaa00]/20 p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-mono text-xs text-[#ffaa00] font-bold tracking-widest">CELL PHONE (SECONDARY)</span>
-                    <span className="text-mono text-xs text-[#ffaa00]">DETECTED</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <div className="text-mono text-xs text-[#4a5568]">Confidence</div>
-                      <div className="text-xl font-bold text-[#ffaa00]">67%</div>
-                    </div>
-                    <div>
-                      <div className="text-mono text-xs text-[#4a5568]">Class ID</div>
-                      <div className="text-mono text-sm font-bold text-[#ffaa00]">Class 67</div>
-                    </div>
-                  </div>
+                  <p className="text-sm text-gray-500">
+                    YOLOv8 inference is not currently running. Connect the AI pipeline to enable real-time object detection on the camera feed.
+                  </p>
                 </div>
 
                 {/* Pipeline */}
-                <div className="bg-white border border-gray-100 border border-[#1e2030] p-4">
-                  <div className="text-mono text-xs text-[#4a5568] tracking-widest mb-3">INFERENCE PIPELINE</div>
+                <div className="bg-white border border-gray-100 p-4 rounded-xl">
+                  <div className="text-mono text-xs text-gray-500 tracking-widest mb-3">CAMERA PIPELINE</div>
                   <div className="space-y-1">
                     {[
                       { label: "Input", value: "ESP32-CAM" },
-                      { label: "Model", value: "YOLOv8 Nano" },
                       { label: "Resolution", value: "1280×960" },
-                      { label: "Framerate", value: "15 fps" },
-                      { label: "Inference", value: "On-device (RPi)" },
-                      { label: "Latency", value: "<100ms" },
-                      { label: "Detections", value: "2 objects" },
+                      { label: "Framerate", value: "~15 fps" },
+                      { label: "Backend", value: "master_rover.py" },
+                      { label: "Protocol", value: "MJPEG over HTTP" },
                     ].map((item) => (
                       <div key={item.label} className="flex justify-between">
                         <span className="text-mono text-xs text-[#4a5568]">{item.label}</span>

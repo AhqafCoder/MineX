@@ -8,19 +8,17 @@ interface Props {
 }
 
 const statusItems = [
-  { key: "battery", getLabel: (s: DashboardState) => `Battery ${s.battery.toFixed(0)}%`, getStatus: (s: DashboardState) => s.battery > 50 ? "ok" : "warn" },
-  { key: "signal", getLabel: (s: DashboardState) => `Signal ${s.signal.toFixed(0)}%`, getStatus: (s: DashboardState) => s.signal > 60 ? "ok" : "warn" },
-  { key: "lidar", getLabel: () => "LiDAR Online", getStatus: () => "ok" },
-  { key: "camera", getLabel: () => "Camera Active", getStatus: () => "ok" },
-  { key: "imu", getLabel: () => "IMU Stable", getStatus: () => "ok" },
-  { key: "db", getLabel: (s: DashboardState) => s.connection === "connected" ? "DB Synced" : "DB Local", getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "warn" },
-  { key: "ai", getLabel: () => "AI Ready", getStatus: () => "ok" },
-  { key: "mission", getLabel: (s: DashboardState) => s.roverState === "emergency" ? "Emergency Stop" : "Mission Active", getStatus: (s: DashboardState) => s.roverState === "emergency" ? "crit" : "ok" },
+  { key: "connection", getLabel: (s: DashboardState) => `Connection: ${s.connection === "connected" ? "Connected" : s.connection === "reconnecting" ? "Reconnecting" : "Offline"}`, getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "crit" },
+  { key: "env", getLabel: () => "Env (DHT11): Online", getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "warn" },
+  { key: "gas", getLabel: () => "Gas (MQ-135): Online", getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "warn" },
+  { key: "imu", getLabel: () => "IMU (MPU-6050): Online", getStatus: (s: DashboardState) => (s.accelX !== 0 || s.accelY !== 0 || s.accelZ !== 0) ? "ok" : "warn" },
+  { key: "camera", getLabel: (s: DashboardState) => s.isLive && s.connection === "connected" ? "Camera: Streaming" : "Camera: Offline", getStatus: (s: DashboardState) => s.isLive && s.connection === "connected" ? "ok" : "crit" },
+  { key: "system", getLabel: (s: DashboardState) => s.roverState === "emergency" ? "System: Emergency" : "System: Normal", getStatus: (s: DashboardState) => s.roverState === "emergency" ? "crit" : "ok" },
 ];
 
 export default function DashboardBottomBar({ state }: Props) {
   const statusColor = {
-    ok: "bg-orange-600",
+    ok: "bg-green-500",
     warn: "bg-yellow-500",
     crit: "bg-red-500",
   };
@@ -32,15 +30,15 @@ export default function DashboardBottomBar({ state }: Props) {
   };
 
   return (
-    <div className="h-10 flex items-center bg-white border-t border-gray-100 overflow-x-auto flex-shrink-0 px-4">
+    <div className="h-8 flex items-center bg-white border-t border-gray-100 overflow-x-auto flex-shrink-0 px-4">
       {statusItems.map((item, i) => {
         const status = item.getStatus(state) as "ok" | "warn" | "crit";
         return (
           <div key={item.key} className="flex items-center flex-shrink-0">
-            {i > 0 && <div className="w-1 h-1 rounded-full bg-gray-200 mx-4" />}
-            <div className="flex items-center gap-2">
-              <div className={cn("w-2 h-2 rounded-full", statusColor[status])} />
-              <span className={cn("text-xs font-medium", textColor[status])}>
+            {i > 0 && <div className="w-1 h-1 rounded-full bg-gray-200 mx-3" />}
+            <div className="flex items-center gap-1.5">
+              <div className={cn("w-1.5 h-1.5 rounded-full", statusColor[status])} />
+              <span className={cn("text-[10px] font-medium", textColor[status])}>
                 {item.getLabel(state)}
               </span>
             </div>
