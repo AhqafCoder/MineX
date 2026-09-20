@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import { normalizeRoverUrl, fetchWithTimeout } from "@/lib/rover-api";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import DashboardBottomBar from "@/components/dashboard/DashboardBottomBar";
 import OverviewPanel from "@/components/dashboard/OverviewPanel";
@@ -74,7 +75,8 @@ export default function DashboardPage() {
 
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/rover/telemetry?ip=${encodeURIComponent(state.roverIp)}`, { cache: 'no-store' });
+        const targetUrl = normalizeRoverUrl(state.roverIp);
+        const res = await fetchWithTimeout(`${targetUrl}/telemetry`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           if (data.error) {
@@ -160,13 +162,13 @@ export default function DashboardPage() {
   const handleReconnect = async () => {
     setState((prev) => ({ ...prev, connection: "reconnecting", refreshKey: prev.refreshKey + 1 }));
     try {
-      const res = await fetch(`/api/rover/telemetry?ip=${encodeURIComponent(state.roverIp)}`, { cache: 'no-store' });
+      const targetUrl = normalizeRoverUrl(state.roverIp);
+      const res = await fetchWithTimeout(`${targetUrl}/telemetry`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (data.error) {
           setState((prev) => ({ ...prev, connection: "offline" }));
         } else {
-          // Immediately set connected, actual data update will be caught by the interval
           setState((prev) => ({ ...prev, connection: "connected" }));
         }
       } else {

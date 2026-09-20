@@ -4,6 +4,7 @@ import { Gamepad2, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Lightbulb } from "
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 import { useState } from "react";
+import { normalizeRoverUrl } from "@/lib/rover-api";
 
 interface Props {
   state: DashboardState;
@@ -18,7 +19,7 @@ export default function RoverControlPanel({ state }: Props) {
 
   const sendDrive = (x: number, y: number) => {
     if (!state.isLive) return;
-    fetch(`/api/rover/drive?ip=${encodeURIComponent(state.roverIp)}`, {
+    fetch(`${normalizeRoverUrl(state.roverIp)}/drive`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ x, y })
@@ -28,7 +29,7 @@ export default function RoverControlPanel({ state }: Props) {
   const toggleLight = async () => {
     if (!state.isLive) { setLightOn(!lightOn); return; }
     try {
-      const res = await fetch(`/api/rover/light?ip=${encodeURIComponent(state.roverIp)}`, { method: 'POST' });
+      const res = await fetch(`${normalizeRoverUrl(state.roverIp)}/toggle_light`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setLightOn(data.state);
@@ -38,7 +39,7 @@ export default function RoverControlPanel({ state }: Props) {
 
   const setPan = (val: number) => {
     if (!state.isLive) return;
-    fetch(`/api/rover/servo?ip=${encodeURIComponent(state.roverIp)}`, {
+    fetch(`${normalizeRoverUrl(state.roverIp)}/servo`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: val })
