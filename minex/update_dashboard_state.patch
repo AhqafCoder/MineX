@@ -1,0 +1,20 @@
+--- app/dashboard/page.tsx
++++ app/dashboard/page.tsx
+@@ -25,6 +25,8 @@
+   temperature: number;
+   humidity: number;
+   gasLevel: "normal" | "warning" | "critical";
++  isLive: boolean;
++  roverIp: string;
+ }
+ 
+ const initialState: DashboardState = {
+@@ -43,6 +45,8 @@
+   temperature: 31,
+   humidity: 68,
+   gasLevel: "normal",
++  isLive: false,
++  roverIp: "http://192.168.4.1:8080",
+ };
+ 
+ export default function DashboardPage() {

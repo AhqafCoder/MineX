@@ -1,23 +1,21 @@
 import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: {
-    default: "MineX — Autonomous Mine Safety & Telemetry Rover",
-    template: "%s | MineX",
-  },
+  title: "MineX — Intelligent Rover. Safer Mines.",
   description:
-    "MineX is an intelligent autonomous rover engineered for extreme underground mine environments — featuring 360° vision, real-time telemetry, gas detection, and all-terrain mobility.",
-  keywords: [
-    "mine safety rover",
-    "autonomous robot",
-    "telemetry",
-    "underground exploration",
-    "MineX",
-    "SIH 2026",
-  ],
+    "An edge-intelligent mining and disaster-response rover designed to detect humans, monitor hazardous environments and operate reliably even when connectivity fails.",
 };
 
 export default function RootLayout({
@@ -26,25 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="min-h-screen bg-white text-gray-900">
+        {children}
       </body>
     </html>
   );
