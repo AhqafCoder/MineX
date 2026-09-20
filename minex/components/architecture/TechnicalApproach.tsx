@@ -39,7 +39,7 @@ export default function TechnicalApproach() {
             <div className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100">
               <div className="p-2 bg-blue-100 text-blue-700 rounded-md"><Thermometer size={18} /></div>
               <div>
-                <div className="text-sm font-bold text-slate-800">DHT11</div>
+                <div className="text-sm font-bold text-slate-800">DHT22</div>
                 <div className="text-[10px] text-slate-500 uppercase">Env Data (GPIO)</div>
               </div>
             </div>

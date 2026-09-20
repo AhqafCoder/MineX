@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import { SidebarItem } from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import DashboardBottomBar from "@/components/dashboard/DashboardBottomBar";
 import OverviewPanel from "@/components/dashboard/OverviewPanel";

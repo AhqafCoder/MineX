@@ -42,7 +42,7 @@ export default function SystemHealthPanel({ state }: Props) {
     { id: "esp32cam", name: "ESP32-CAM", status: state.isLive && isConnected ? "online" : "offline" },
     { id: "mpu6050", name: "MPU6050", status: isConnected && hasImu ? "online" : "offline" },
     { id: "qmc6310", name: "QMC6310", status: isConnected && hasImu ? "online" : "offline" },
-    { id: "dht11", name: "DHT11", status: isConnected ? "online" : "offline" },
+    { id: "dht22", name: "DHT22", status: isConnected ? "online" : "offline" },
     { id: "mq135", name: "MQ135", status: isConnected && state.gas !== "OFFLINE" ? "online" : "offline" },
     { id: "sqlite", name: "SQLite", status: isConnected ? "synced" : "local" },
     { id: "mongodb", name: "MongoDB", status: isConnected ? "connected" : "disconnected" },

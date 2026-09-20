@@ -6,7 +6,7 @@ import ScrollReveal from "./ScrollReveal";
 import type { LucideIcon } from "lucide-react";
 
 const hardware: { id: string; icon: LucideIcon; name: string; desc: string; featured?: boolean }[] = [
-  { id: "DHT11", icon: Thermometer, name: "Temperature + Humidity", desc: "Environmental monitoring" },
+  { id: "DHT22", icon: Thermometer, name: "Temperature + Humidity", desc: "Environmental monitoring" },
   { id: "MPU-6050", icon: Compass, name: "Accelerometer / Gyroscope", desc: "Motion and kinematics" },
   { id: "QMC6310", icon: Navigation, name: "Compass", desc: "Orientation & heading" },
   { id: "ESP32-CAM", icon: Camera, name: "Camera Feed", desc: "Vision input for AI" },

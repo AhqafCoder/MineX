@@ -9,7 +9,7 @@ interface Props {
 
 const statusItems = [
   { key: "connection", getLabel: (s: DashboardState) => `Connection: ${s.connection === "connected" ? "Connected" : s.connection === "reconnecting" ? "Reconnecting" : "Offline"}`, getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "crit" },
-  { key: "env", getLabel: () => "Env (DHT11): Online", getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "warn" },
+  { key: "env", getLabel: () => "Env (DHT22): Online", getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "warn" },
   { key: "gas", getLabel: () => "Gas (MQ-135): Online", getStatus: (s: DashboardState) => s.connection === "connected" ? "ok" : "warn" },
   { key: "imu", getLabel: () => "IMU (MPU-6050): Online", getStatus: (s: DashboardState) => (s.accelX !== 0 || s.accelY !== 0 || s.accelZ !== 0) ? "ok" : "warn" },
   { key: "camera", getLabel: (s: DashboardState) => s.isLive && s.connection === "connected" ? "Camera: Streaming" : "Camera: Offline", getStatus: (s: DashboardState) => s.isLive && s.connection === "connected" ? "ok" : "crit" },

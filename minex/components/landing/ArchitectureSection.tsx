@@ -5,7 +5,7 @@ import ScrollReveal from "./ScrollReveal";
 import type { LucideIcon } from "lucide-react";
 
 const archLayers: { icon: LucideIcon; label: string; items: string; color: string }[] = [
-  { icon: Microscope, label: "Sensor Layer", items: "DHT11 · MPU-6050 · QMC6310 · MQ-135 · ESP32-CAM", color: "bg-gray-50 border-gray-100 text-orange-600" },
+  { icon: Microscope, label: "Sensor Layer", items: "DHT22 · MPU-6050 · QMC6310 · MQ-135 · ESP32-CAM", color: "bg-gray-50 border-gray-100 text-orange-600" },
   { icon: Cpu, label: "Edge Processing", items: "Raspberry Pi", color: "bg-gray-50 border-gray-100 text-blue-700" },
   { icon: Brain, label: "Intelligence", items: "YOLOv8 Nano · Sensor Fusion · Safety Logic", color: "bg-gray-50 border-gray-100 text-green-700" },
   { icon: Database, label: "Data Layer", items: "SQLite · MongoDB Atlas", color: "bg-gray-50 border-gray-100 text-purple-700" },
@@ -16,7 +16,7 @@ const archLayers: { icon: LucideIcon; label: string; items: string; color: strin
 const threads = [
   { id: "01", name: "MPU-6050", label: "Motion / IMU" },
   { id: "02", name: "QMC6310", label: "Compass" },
-  { id: "03", name: "DHT11", label: "Env Monitor" },
+  { id: "03", name: "DHT22", label: "Env Monitor" },
   { id: "04", name: "MQ-135", label: "Gas Sensor" },
   { id: "05", name: "ESP32-CAM", label: "Vision Feed" },
 ];

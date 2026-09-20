@@ -53,9 +53,9 @@ export default function SafetyIntelPanel({ state }: Props) {
       </div>
 
       <div className="p-4 flex-1 flex flex-col gap-3 overflow-y-auto">
-        {/* Environment (DHT11) */}
+        {/* Environment (DHT22) */}
         <div>
-          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Environment (DHT11)</div>
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Environment (DHT22)</div>
           <div className="grid grid-cols-2 gap-2">
             <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
               <div className="flex items-center gap-1.5 mb-1">

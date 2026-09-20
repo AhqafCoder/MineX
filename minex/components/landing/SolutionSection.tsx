@@ -6,7 +6,7 @@ import type { LucideIcon } from "lucide-react";
 
 const flow: { icon: LucideIcon; label: string; sub: string }[] = [
   { icon: Bot, label: "Rover", sub: "MINEX-01" },
-  { icon: Microscope, label: "Sensors", sub: "DHT11 · MPU-6050 · MQ-135" },
+  { icon: Microscope, label: "Sensors", sub: "DHT22 · MPU-6050 · MQ-135" },
   { icon: Cpu, label: "Edge Node", sub: "Raspberry Pi" },
   { icon: Brain, label: "AI + Fusion", sub: "YOLOv8 Nano" },
   { icon: Database, label: "Local Storage", sub: "SQLite · Offline-first" },

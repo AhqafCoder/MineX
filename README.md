@@ -30,7 +30,7 @@ The system is purpose-built to detect trapped miners, identify toxic gas zones, 
 | Feature | Description |
 |---|---|
 | **AI Vision (YOLOv8)** | Real-time object detection via ESP32-CAM for human detection and hazard identification |
-| **Environmental Sensing** | Continuous temperature, humidity (DHT11) and toxic gas monitoring (MQ-135) |
+| **Environmental Sensing** | Continuous temperature, humidity (DHT22) and toxic gas monitoring (MQ-135) |
 | **Motion & Orientation** | 6-axis IMU (MPU-6050) + digital compass (QMC5310) for heading and tilt tracking |
 | **Command Center** | Professional web dashboard with live telemetry, camera feeds, and rover controls |
 | **Session Logging** | Timestamped telemetry recording for post-mission analysis and reporting |
@@ -50,7 +50,7 @@ The system is purpose-built to detect trapped miners, identify toxic gas zones, 
 ┌──────────────────────┴───────────────────────────────────┐
 │                   ROVER (ESP32 + Pi)                     │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────────┐ │
-│  │ ESP32-CAM │ │  DHT11   │ │  MQ-135  │ │ MPU-6050 + │ │
+│  │ ESP32-CAM │ │  DHT22   │ │  MQ-135  │ │ MPU-6050 + │ │
 │  │ (Vision) │ │ (Env)    │ │ (Gas)    │ │ QMC5310    │ │
 │  └──────────┘ └──────────┘ └──────────┘ └────────────┘ │
 │  ┌──────────────────────────────────────────────────┐   │
@@ -65,7 +65,7 @@ The system is purpose-built to detect trapped miners, identify toxic gas zones, 
 |---|---|
 | **ESP32** | Main microcontroller, Wi-Fi AP, sensor hub |
 | **ESP32-CAM** | Live MJPEG video stream + YOLOv8 inference input |
-| **DHT11** | Temperature & humidity monitoring |
+| **DHT22** | Temperature & humidity monitoring |
 | **MQ-135** | Air quality / toxic gas detection |
 | **MPU-6050** | 6-axis accelerometer + gyroscope (pitch, roll) |
 | **QMC5310** | Digital compass for heading |

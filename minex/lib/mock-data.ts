@@ -90,7 +90,7 @@ export const systemHealth = {
   esp32cam: "online" as "online" | "offline",
   mpu6050: "online" as "online" | "offline",
   qmc6310: "online" as "online" | "offline",
-  dht11: "online" as "online" | "offline",
+  dht22: "online" as "online" | "offline",
   mq135: "online" as "online" | "offline",
   sqlite: "synced" as "synced" | "local" | "offline",
   mongodb: "connected" as "connected" | "disconnected",
