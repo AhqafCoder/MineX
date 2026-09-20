@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, User, Wifi, WifiOff, Loader2, Play, Square } from "lucide-react";
+import { Bell, User, Wifi, WifiOff, Loader2, Play, Square, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -10,6 +10,7 @@ interface Props {
   onToggleLive?: () => void;
   onIpChange?: (ip: string) => void;
   onToggleSession?: () => void;
+  onRefresh?: () => void;
 }
 
 export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive, onIpChange, onToggleSession }: Props) {
@@ -81,7 +82,7 @@ export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive
               value={state.roverIp}
               onChange={(e) => onIpChange?.(e.target.value)}
               className="px-2 py-1 border border-gray-200 rounded text-xs w-36"
-              placeholder="http://192.168.4.1:8080"
+              placeholder="http://winner.local:8080"
             />
             <button onClick={onToggleLive} className={cn("px-3 py-1 text-xs font-bold rounded-full border transition-all", state.isLive ? "bg-green-100 text-green-700 border-green-200" : "bg-gray-100 text-gray-500 border-gray-200")}>
               {state.isLive ? "LIVE" : "SIM"}
@@ -100,6 +101,15 @@ export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive
         <div className="w-px h-8 bg-gray-100" />
         
         <div className="flex items-center gap-2">
+          {onRefresh && (
+            <button 
+              onClick={onRefresh}
+              className="p-2 text-gray-500 hover:text-orange-600 hover:bg-orange-50 rounded-full transition-colors"
+              title="Refresh Data"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </button>
+          )}
           <button className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-full transition-colors relative">
             <Bell className="w-5 h-5" />
             <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />

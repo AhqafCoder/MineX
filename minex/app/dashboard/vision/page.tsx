@@ -9,8 +9,8 @@ import type { DashboardState } from "@/app/dashboard/page";
 const offlineState: DashboardState = {
   heading: 0, direction: "--", mode: "manual", connection: "offline", roverState: "standby",
   temperature: 0, humidity: 0, gasLevel: "normal", gas: "OFFLINE",
-  accelX: 0, accelY: 0, accelZ: 0, pitch: 0, roll: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
-  sessionActive: false, sessionStartTime: null, sessionElapsed: 0,
+  accelX: 0, accelY: 0, accelZ: 0, pitch: 0, roll: 0, isLive: false, roverIp: "http://winner.local:8080",
+  sessionActive: false, sessionStartTime: null, sessionElapsed: 0, refreshKey: 0,
 };
 
 export default function VisionPage() {

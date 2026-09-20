@@ -30,6 +30,8 @@ export interface DashboardState {
   sessionActive: boolean;
   sessionStartTime: number | null;
   sessionElapsed: number;
+  // UI State
+  refreshKey: number;
 }
 
 const initialState: DashboardState = {
@@ -48,10 +50,11 @@ const initialState: DashboardState = {
   pitch: 0,
   roll: 0,
   isLive: true,
-  roverIp: "http://192.168.4.1:8080",
+  roverIp: "http://winner.local:8080",
   sessionActive: false,
   sessionStartTime: null,
   sessionElapsed: 0,
+  refreshKey: 0,
 };
 
 /** Compute pitch & roll (degrees) from raw accelerometer values */
@@ -120,7 +123,7 @@ export default function DashboardPage() {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [state.isLive, state.roverIp]);
+  }, [state.isLive, state.roverIp, state.refreshKey]);
 
   // Session timer tick
   useEffect(() => {
@@ -181,6 +184,7 @@ export default function DashboardPage() {
           onToggleLive={() => setState(s => ({ ...s, isLive: !s.isLive }))}
           onIpChange={(ip: string) => setState(s => ({ ...s, roverIp: ip }))}
           onToggleSession={handleToggleSession}
+          onRefresh={() => setState(s => ({ ...s, refreshKey: s.refreshKey + 1, connection: "reconnecting" }))}
         />
         
         <div className="flex-1 overflow-auto bg-gray-50">

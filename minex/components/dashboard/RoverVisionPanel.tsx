@@ -57,7 +57,7 @@ export default function RoverVisionPanel({ state }: Props) {
         {state.isLive && !isOffline ? (
           <>
             <img 
-              src={`/api/rover/video?ip=${encodeURIComponent(state.roverIp)}`} 
+              src={`/api/rover/video?ip=${encodeURIComponent(state.roverIp)}&t=${state.refreshKey}`} 
               alt="Live Feed" 
               className="w-full h-full object-cover transition-transform duration-300"
               style={{ transform: `rotate(${rotation}deg)` }}
