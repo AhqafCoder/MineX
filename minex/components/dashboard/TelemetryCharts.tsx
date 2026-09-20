@@ -1,8 +1,9 @@
 "use client";
 
-import { Activity } from "lucide-react";
+import { Activity, RefreshCw } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useState, useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
 interface Props {
@@ -11,8 +12,15 @@ interface Props {
 
 export default function TelemetryCharts({ state }: Props) {
   const [history, setHistory] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const lastUpdateRef = useRef(Date.now());
   const isConnected = state.connection === "connected";
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setHistory([]);
+    setTimeout(() => setRefreshing(false), 800);
+  };
 
   useEffect(() => {
     if (!isConnected) return;
@@ -61,6 +69,13 @@ export default function TelemetryCharts({ state }: Props) {
             <span className="text-[10px] font-bold text-gray-400 tracking-wider">OFFLINE</span>
           </div>
         )}
+        <button
+          onClick={handleRefresh}
+          className={cn("ml-2 p-1.5 text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors", refreshing && "animate-spin text-gray-900")}
+          title="Clear and Refresh Charts"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+        </button>
       </div>
 
       {hasData ? (

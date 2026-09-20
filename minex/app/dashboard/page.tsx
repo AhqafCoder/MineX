@@ -157,14 +157,24 @@ export default function DashboardPage() {
     setState((prev) => ({ ...prev, mode }));
   };
 
-  const simulateOffline = () => {
-    setState((prev) => ({ ...prev, connection: "offline" }));
-    setTimeout(() => {
-      setState((prev) => ({ ...prev, connection: "reconnecting" }));
-      setTimeout(() => {
-        setState((prev) => ({ ...prev, connection: "connected" }));
-      }, 3000);
-    }, 2000);
+  const handleReconnect = async () => {
+    setState((prev) => ({ ...prev, connection: "reconnecting", refreshKey: prev.refreshKey + 1 }));
+    try {
+      const res = await fetch(`/api/rover/telemetry?ip=${encodeURIComponent(state.roverIp)}`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.error) {
+          setState((prev) => ({ ...prev, connection: "offline" }));
+        } else {
+          // Immediately set connected, actual data update will be caught by the interval
+          setState((prev) => ({ ...prev, connection: "connected" }));
+        }
+      } else {
+        setState((prev) => ({ ...prev, connection: "offline" }));
+      }
+    } catch {
+      setState((prev) => ({ ...prev, connection: "offline" }));
+    }
   };
 
   return (
@@ -180,11 +190,11 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <DashboardTopBar
           state={state}
-          onSimulateOffline={simulateOffline}
+          onReconnect={handleReconnect}
           onToggleLive={() => setState(s => ({ ...s, isLive: !s.isLive }))}
           onIpChange={(ip: string) => setState(s => ({ ...s, roverIp: ip }))}
           onToggleSession={handleToggleSession}
-          onRefresh={() => setState(s => ({ ...s, refreshKey: s.refreshKey + 1, connection: "reconnecting" }))}
+          onRefresh={handleReconnect}
         />
         
         <div className="flex-1 overflow-auto bg-gray-50">

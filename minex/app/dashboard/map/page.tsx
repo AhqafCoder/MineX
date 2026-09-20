@@ -18,7 +18,7 @@ export default function MapPage() {
     <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
       <DashboardSidebar collapsed={false} onToggle={() => {}} activeView="map" onNavigate={() => {}} roverState="standby" />
       <div className="flex-1 flex flex-col">
-        <DashboardTopBar state={offlineState} onSimulateOffline={() => {}} />
+        <DashboardTopBar state={offlineState} onReconnect={() => {}} />
         <div className="flex-1 overflow-auto p-4">
           <div className="max-w-5xl mx-auto space-y-4">
             <div className="flex items-center justify-between">

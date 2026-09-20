@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Camera, Maximize2, AlertCircle } from "lucide-react";
+import { Camera, Maximize2, AlertCircle, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -12,6 +12,8 @@ interface Props {
 export default function RoverVisionPanel({ state }: Props) {
   const [recording, setRecording] = useState(false);
   const [rotation, setRotation] = useState(0);
+  const [imgError, setImgError] = useState(false);
+  const [localRefresh, setLocalRefresh] = useState(0);
   const isOffline = state.connection === "offline";
 
   const toggleRecord = async () => {
@@ -46,6 +48,14 @@ export default function RoverVisionPanel({ state }: Props) {
               REC
             </div>
           )}
+          <button
+            onClick={() => { setImgError(false); setLocalRefresh(Date.now()); }}
+            disabled={isOffline}
+            className="p-1.5 text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors disabled:opacity-40"
+            title="Refresh Stream"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
           <span className="text-[10px] font-black tracking-widest text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
             {isOffline ? "OFFLINE" : "ESP32-CAM"}
           </span>
@@ -56,20 +66,31 @@ export default function RoverVisionPanel({ state }: Props) {
       <div className="relative flex-1 bg-gray-900 min-h-[180px]">
         {state.isLive && !isOffline ? (
           <>
-            <img 
-              src={`/api/rover/video?ip=${encodeURIComponent(state.roverIp)}&t=${state.refreshKey}`} 
-              alt="Live Feed" 
-              className="w-full h-full object-cover transition-transform duration-300"
-              style={{ transform: `rotate(${rotation}deg)` }}
-              onError={(e) => { 
-                e.currentTarget.style.display = "none";
-              }}
-            />
+            {!imgError ? (
+              <img 
+                src={`/api/rover/video?ip=${encodeURIComponent(state.roverIp)}&t=${state.refreshKey}_${localRefresh}`} 
+                alt="Live Feed" 
+                className="w-full h-full object-cover transition-transform duration-300"
+                style={{ transform: `rotate(${rotation}deg)` }}
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-900">
+                <AlertCircle className="w-8 h-8 mb-2 text-red-500" />
+                <span className="text-sm font-semibold text-gray-300">Stream Connection Failed</span>
+                <button 
+                  onClick={() => { setImgError(false); setLocalRefresh(Date.now()); }}
+                  className="mt-3 px-4 py-1.5 bg-gray-800 hover:bg-gray-700 text-xs text-white rounded-full transition-colors border border-gray-700"
+                >
+                  Retry Stream
+                </button>
+              </div>
+            )}
             {/* Live overlay */}
             <div className="absolute top-3 left-3 flex flex-col gap-1.5">
               <div className="bg-black/50 backdrop-blur-md border border-white/10 text-gray-200 text-[10px] font-black tracking-widest px-2.5 py-1 rounded flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                ESP32-CAM LIVE
+                <span className={cn("w-1.5 h-1.5 rounded-full", imgError ? "bg-red-500" : "bg-green-400 animate-pulse")} />
+                {imgError ? "STREAM ERROR" : "ESP32-CAM LIVE"}
               </div>
             </div>
           </>

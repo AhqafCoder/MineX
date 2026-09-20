@@ -1,9 +1,16 @@
 import { NextRequest } from "next/server";
+import { normalizeRoverUrl, fetchWithTimeout } from "@/lib/rover-api";
 
 export async function GET(req: NextRequest) {
-  const ip = req.nextUrl.searchParams.get("ip") || "http://winner.local:8080";
+  const ip = req.nextUrl.searchParams.get("ip") || "";
+  const targetUrl = normalizeRoverUrl(ip);
+  
   try {
-    const upstream = await fetch(`${ip}/video_feed`, { cache: "no-store" });
+    const upstream = await fetchWithTimeout(`${targetUrl}/video_feed`, { 
+      cache: "no-store",
+      timeout: 5000 // slightly longer timeout for video stream initialization
+    });
+    
     if (!upstream.ok || !upstream.body) {
       return new Response("No video stream available", { status: 502 });
     }
@@ -16,7 +23,7 @@ export async function GET(req: NextRequest) {
         "Connection": "keep-alive",
       },
     });
-  } catch {
-    return new Response("Rover offline", { status: 502 });
+  } catch (error) {
+    return new Response(`Rover offline: ${String(error)}`, { status: 502 });
   }
 }

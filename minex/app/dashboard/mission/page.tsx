@@ -18,7 +18,7 @@ export default function MissionPage() {
     <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
       <DashboardSidebar collapsed={false} onToggle={() => {}} activeView="mission" onNavigate={() => {}} roverState="standby" />
       <div className="flex-1 flex flex-col">
-        <DashboardTopBar state={offlineState} onSimulateOffline={() => {}} />
+        <DashboardTopBar state={offlineState} onReconnect={() => {}} />
         <div className="flex-1 overflow-auto p-4">
           <div className="max-w-5xl mx-auto flex items-center justify-center h-[60vh]">
             <div className="text-center bg-white p-12 rounded-3xl border shadow-sm max-w-md">

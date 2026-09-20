@@ -1,6 +1,7 @@
 "use client";
 
-import { Shield, Thermometer, Droplets, Wind, Navigation } from "lucide-react";
+import { Shield, Thermometer, Droplets, Wind, Navigation, RefreshCw } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -9,7 +10,15 @@ interface Props {
 }
 
 export default function SafetyIntelPanel({ state }: Props) {
+  const [refreshing, setRefreshing] = useState(false);
   const isOffline = state.connection === "offline";
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    // Since page.tsx automatically polls every second, we just show a spin animation
+    // to give feedback, the polling loop handles actual data syncing
+    setTimeout(() => setRefreshing(false), 800);
+  };
 
   const envStatus = {
     temp: isOffline ? "offline" : state.temperature < 35 ? "normal" : state.temperature < 45 ? "warning" : "critical",
@@ -34,6 +43,13 @@ export default function SafetyIntelPanel({ state }: Props) {
             <p className="text-[10px] text-gray-500">{isOffline ? "Waiting for connection" : "Live sensor readings"}</p>
           </div>
         </div>
+        <button
+          onClick={handleRefresh}
+          className={cn("p-1.5 text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors", refreshing && "animate-spin text-gray-900")}
+          title="Refresh Sensor Data"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+        </button>
       </div>
 
       <div className="p-4 flex-1 flex flex-col gap-3 overflow-y-auto">

@@ -18,7 +18,7 @@ export default function AlertsPage() {
     <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
       <DashboardSidebar collapsed={false} onToggle={() => {}} activeView="alerts" onNavigate={() => {}} roverState="standby" />
       <div className="flex-1 flex flex-col">
-        <DashboardTopBar state={offlineState} onSimulateOffline={() => {}} />
+        <DashboardTopBar state={offlineState} onReconnect={() => {}} />
         <div className="flex-1 overflow-auto p-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-6">

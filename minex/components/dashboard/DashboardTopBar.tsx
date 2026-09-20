@@ -6,14 +6,14 @@ import type { DashboardState } from "@/app/dashboard/page";
 
 interface Props {
   state: DashboardState;
-  onSimulateOffline: () => void;
+  onReconnect?: () => void;
   onToggleLive?: () => void;
   onIpChange?: (ip: string) => void;
   onToggleSession?: () => void;
   onRefresh?: () => void;
 }
 
-export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive, onIpChange, onToggleSession, onRefresh }: Props) {
+export default function DashboardTopBar({ state, onReconnect, onToggleLive, onIpChange, onToggleSession, onRefresh }: Props) {
   const connectionConfig = {
     connected: { color: "text-orange-600", bg: "bg-gray-100", label: "Connected", icon: Wifi },
     reconnecting: { color: "text-yellow-600", bg: "bg-gray-100", label: "Reconnecting", icon: Loader2 },
@@ -91,7 +91,7 @@ export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive
         )}
 
         <button
-          onClick={onSimulateOffline}
+          onClick={onReconnect}
           className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-opacity hover:opacity-80", conn.bg, conn.color)}
         >
           <conn.icon className={cn("w-3.5 h-3.5", state.connection === "reconnecting" && "animate-spin")} />
