@@ -113,7 +113,7 @@ SIH2026-MineX/
 └── README.md
 ```
 
-## Team
+## Team.
 
 Built for **Smart India Hackathon 2026** by Team MineX.
 
