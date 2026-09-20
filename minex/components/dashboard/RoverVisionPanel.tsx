@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Camera, Maximize2, AlertCircle, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { normalizeRoverUrl } from "@/lib/rover-api";
 import type { DashboardState } from "@/app/dashboard/page";
 
 interface Props {
@@ -20,7 +19,7 @@ export default function RoverVisionPanel({ state }: Props) {
   const toggleRecord = async () => {
     if (state.isLive && !isOffline) {
       try {
-        const res = await fetch(`${normalizeRoverUrl(state.roverIp)}/toggle_record`, { method: "POST" });
+        const res = await fetch(`/api/rover/record?ip=${encodeURIComponent(state.roverIp)}`, { method: "POST" });
         if (res.ok) {
           const data = await res.json();
           setRecording(data.state);
@@ -69,7 +68,7 @@ export default function RoverVisionPanel({ state }: Props) {
           <>
             {!imgError ? (
               <img 
-                src={`${normalizeRoverUrl(state.roverIp)}/video_feed?t=${state.refreshKey}_${localRefresh}`} 
+                src={`/api/rover/video?ip=${encodeURIComponent(state.roverIp)}&t=${state.refreshKey}_${localRefresh}`} 
                 alt="Live Feed" 
                 className="w-full h-full object-cover transition-transform duration-300"
                 style={{ transform: `rotate(${rotation}deg)` }}

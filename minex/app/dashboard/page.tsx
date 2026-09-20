@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
-import { normalizeRoverUrl, fetchWithTimeout } from "@/lib/rover-api";
+import { SidebarItem } from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import DashboardBottomBar from "@/components/dashboard/DashboardBottomBar";
 import OverviewPanel from "@/components/dashboard/OverviewPanel";
@@ -75,8 +75,7 @@ export default function DashboardPage() {
 
     const interval = setInterval(async () => {
       try {
-        const targetUrl = normalizeRoverUrl(state.roverIp);
-        const res = await fetchWithTimeout(`${targetUrl}/telemetry`, { cache: 'no-store' });
+        const res = await fetch(`/api/rover/telemetry?ip=${encodeURIComponent(state.roverIp)}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           if (data.error) {
@@ -162,8 +161,7 @@ export default function DashboardPage() {
   const handleReconnect = async () => {
     setState((prev) => ({ ...prev, connection: "reconnecting", refreshKey: prev.refreshKey + 1 }));
     try {
-      const targetUrl = normalizeRoverUrl(state.roverIp);
-      const res = await fetchWithTimeout(`${targetUrl}/telemetry`, { cache: 'no-store' });
+      const res = await fetch(`/api/rover/telemetry?ip=${encodeURIComponent(state.roverIp)}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (data.error) {
