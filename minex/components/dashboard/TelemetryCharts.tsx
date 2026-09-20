@@ -1,7 +1,7 @@
 "use client";
 
 import { Activity } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, AreaChart, Area } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useState, useEffect, useRef } from "react";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -12,14 +12,17 @@ interface Props {
 export default function TelemetryCharts({ state }: Props) {
   const [history, setHistory] = useState<any[]>([]);
   const lastUpdateRef = useRef(Date.now());
+  const isConnected = state.connection === "connected";
 
   useEffect(() => {
+    if (!isConnected) return;
+
     const now = Date.now();
     if (now - lastUpdateRef.current >= 1000) {
       lastUpdateRef.current = now;
       const newEntry = {
         time: new Date(now).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
-        gas: state.gasLevel === "normal" ? 100 : state.gasLevel === "warning" ? 150 : 250, // rough representation
+        gas: state.gasLevel === "normal" ? 100 : state.gasLevel === "warning" ? 150 : 250,
         temp: state.temperature,
         hum: state.humidity,
         heading: state.heading,
@@ -31,22 +34,9 @@ export default function TelemetryCharts({ state }: Props) {
         return next;
       });
     }
-  }, [state]);
+  }, [state, isConnected]);
 
-  // Initial fill for empty state to make charts look nice before 20s elapsed
-  useEffect(() => {
-    if (history.length === 0) {
-      const now = Date.now();
-      const initial = Array.from({ length: 20 }, (_, i) => ({
-        time: new Date(now - (20 - i) * 1000).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
-        gas: 100,
-        temp: 24,
-        hum: 55,
-        heading: 0,
-      }));
-      setHistory(initial);
-    }
-  }, []);
+  const hasData = history.length > 0;
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
@@ -57,21 +47,36 @@ export default function TelemetryCharts({ state }: Props) {
           </div>
           <div>
             <h3 className="font-bold text-gray-900 text-sm">Live Telemetry</h3>
-            <p className="text-[10px] text-gray-500">Real-time sensor data streaming</p>
+            <p className="text-[10px] text-gray-500">{isConnected ? "Real-time sensor data streaming" : "Connect rover for live data"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 border border-green-100 rounded-md">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-          <span className="text-[10px] font-bold text-green-600 tracking-wider">LIVE SYNC</span>
-        </div>
+        {isConnected ? (
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-green-50 border border-green-100 rounded-md">
+            <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-[10px] font-bold text-green-600 tracking-wider">LIVE SYNC</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 border border-gray-100 rounded-md">
+            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+            <span className="text-[10px] font-bold text-gray-400 tracking-wider">OFFLINE</span>
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-100">
-        <ChartCard title="Air Quality" data={history} dataKey="gas" color="#10b981" fill="rgba(16, 185, 129, 0.1)" value={state.gas || "OFFLINE"} />
-        <ChartCard title="Temperature (°C)" data={history} dataKey="temp" color="#3b82f6" fill="rgba(59, 130, 246, 0.1)" value={state.temperature.toFixed(1)} />
-        <ChartCard title="Humidity (%)" data={history} dataKey="hum" color="#f59e0b" fill="rgba(245, 158, 11, 0.1)" value={state.humidity.toFixed(1)} />
-        <ChartCard title="Heading" data={history} dataKey="heading" color="#8b5cf6" fill="rgba(139, 92, 246, 0.1)" value={`${state.heading.toFixed(0)}° ${state.direction}`} />
-      </div>
+      {hasData ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-100">
+          <ChartCard title="Air Quality" data={history} dataKey="gas" color="#10b981" fill="rgba(16, 185, 129, 0.1)" value={isConnected ? (state.gas || "--") : "--"} />
+          <ChartCard title="Temperature (°C)" data={history} dataKey="temp" color="#3b82f6" fill="rgba(59, 130, 246, 0.1)" value={isConnected ? state.temperature.toFixed(1) : "--"} />
+          <ChartCard title="Humidity (%)" data={history} dataKey="hum" color="#f59e0b" fill="rgba(245, 158, 11, 0.1)" value={isConnected ? state.humidity.toFixed(1) : "--"} />
+          <ChartCard title="Heading" data={history} dataKey="heading" color="#8b5cf6" fill="rgba(139, 92, 246, 0.1)" value={isConnected ? `${state.heading.toFixed(0)}° ${state.direction}` : "--"} />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+          <Activity className="w-8 h-8 mb-3 text-gray-300" />
+          <span className="text-sm font-medium">No telemetry data yet</span>
+          <span className="text-xs mt-1">Connect to rover and start a session to see live charts</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, Thermometer, Droplets, Wind, Navigation, Activity } from "lucide-react";
+import { Shield, Thermometer, Droplets, Wind, Navigation } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -9,16 +9,18 @@ interface Props {
 }
 
 export default function SafetyIntelPanel({ state }: Props) {
+  const isOffline = state.connection === "offline";
+
   const envStatus = {
-    temp: state.temperature < 35 ? "normal" : state.temperature < 45 ? "warning" : "critical",
-    humidity: state.humidity < 75 ? "normal" : state.humidity < 85 ? "warning" : "critical",
-    gas: state.gasLevel,
+    temp: isOffline ? "offline" : state.temperature < 35 ? "normal" : state.temperature < 45 ? "warning" : "critical",
+    humidity: isOffline ? "offline" : state.humidity < 75 ? "normal" : state.humidity < 85 ? "warning" : "critical",
+    gas: isOffline ? "offline" : state.gasLevel,
   };
 
-  const gasText = typeof state.gas === "string" && state.gas ? state.gas : "OFFLINE";
+  const gasText = isOffline ? "--" : (typeof state.gas === "string" && state.gas && state.gas !== "OFFLINE") ? state.gas : "--";
 
-  const statusColor = { normal: "bg-green-500", warning: "bg-yellow-500", critical: "bg-red-500" };
-  const textColor = { normal: "text-green-600", warning: "text-yellow-600", critical: "text-red-600" };
+  const statusColor: Record<string, string> = { normal: "bg-green-500", warning: "bg-yellow-500", critical: "bg-red-500", offline: "bg-gray-300" };
+  const textColor: Record<string, string> = { normal: "text-green-600", warning: "text-yellow-600", critical: "text-red-600", offline: "text-gray-400" };
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-full flex flex-col">
@@ -29,7 +31,7 @@ export default function SafetyIntelPanel({ state }: Props) {
           </div>
           <div>
             <h3 className="font-bold text-gray-900 text-sm">Safety Intel</h3>
-            <p className="text-[10px] text-gray-500">Live sensor readings</p>
+            <p className="text-[10px] text-gray-500">{isOffline ? "Waiting for connection" : "Live sensor readings"}</p>
           </div>
         </div>
       </div>
@@ -45,8 +47,10 @@ export default function SafetyIntelPanel({ state }: Props) {
                 <span className="text-[10px] font-medium text-gray-400">Temp</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-lg font-bold text-gray-900">{state.temperature.toFixed(1)}<span className="text-xs text-gray-400">°C</span></span>
-                <div className={cn("w-1.5 h-1.5 rounded-full ml-auto", statusColor[envStatus.temp as keyof typeof statusColor])} />
+                <span className="text-lg font-bold text-gray-900">
+                  {isOffline ? "--" : state.temperature.toFixed(1)}<span className="text-xs text-gray-400">°C</span>
+                </span>
+                <div className={cn("w-1.5 h-1.5 rounded-full ml-auto", statusColor[envStatus.temp])} />
               </div>
             </div>
             <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
@@ -55,8 +59,10 @@ export default function SafetyIntelPanel({ state }: Props) {
                 <span className="text-[10px] font-medium text-gray-400">Humidity</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-lg font-bold text-gray-900">{state.humidity.toFixed(1)}<span className="text-xs text-gray-400">%</span></span>
-                <div className={cn("w-1.5 h-1.5 rounded-full ml-auto", statusColor[envStatus.humidity as keyof typeof statusColor])} />
+                <span className="text-lg font-bold text-gray-900">
+                  {isOffline ? "--" : state.humidity.toFixed(1)}<span className="text-xs text-gray-400">%</span>
+                </span>
+                <div className={cn("w-1.5 h-1.5 rounded-full ml-auto", statusColor[envStatus.humidity])} />
               </div>
             </div>
           </div>
@@ -69,16 +75,17 @@ export default function SafetyIntelPanel({ state }: Props) {
             <div className="flex items-center gap-2">
               <Wind className="w-4 h-4 text-gray-400" />
               <div>
-                <div className={cn("text-sm font-bold", textColor[state.gasLevel])}>{gasText}</div>
+                <div className={cn("text-sm font-bold", textColor[envStatus.gas])}>{gasText}</div>
               </div>
             </div>
             <span className={cn(
               "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full",
+              isOffline ? "bg-gray-100 text-gray-400" :
               state.gasLevel === "normal" ? "bg-green-50 text-green-600" :
               state.gasLevel === "warning" ? "bg-yellow-50 text-yellow-600" :
               "bg-red-50 text-red-600"
             )}>
-              {state.gasLevel === "normal" ? "SAFE" : state.gasLevel === "warning" ? "WARNING" : "DANGER"}
+              {isOffline ? "OFFLINE" : state.gasLevel === "normal" ? "SAFE" : state.gasLevel === "warning" ? "WARNING" : "DANGER"}
             </span>
           </div>
         </div>
@@ -91,21 +98,21 @@ export default function SafetyIntelPanel({ state }: Props) {
               <div>
                 <div className="text-[10px] text-gray-400 font-medium">Accelerometer (g)</div>
                 <div className="text-xs font-bold text-gray-900 font-mono">
-                  X: {state.accelX.toFixed(2)}  Y: {state.accelY.toFixed(2)}  Z: {state.accelZ.toFixed(2)}
+                  {isOffline ? "X: --  Y: --  Z: --" : `X: ${state.accelX.toFixed(2)}  Y: ${state.accelY.toFixed(2)}  Z: ${state.accelZ.toFixed(2)}`}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <div>
                   <div className="text-[10px] text-gray-400 font-medium">Heading</div>
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-bold text-gray-900">{state.heading.toFixed(0)}°</span>
-                    <span className="text-xs font-bold text-orange-600">{state.direction}</span>
+                    <span className="text-sm font-bold text-gray-900">{isOffline ? "--" : state.heading.toFixed(0)}°</span>
+                    <span className="text-xs font-bold text-orange-600">{isOffline ? "--" : state.direction}</span>
                   </div>
                 </div>
                 <div className="ml-auto w-6 h-6 rounded-full border border-gray-200 bg-white flex items-center justify-center relative">
                   <div
                     className="w-4 h-4 rounded-full border border-orange-400 relative transition-transform duration-300"
-                    style={{ transform: `rotate(${state.heading}deg)` }}
+                    style={{ transform: `rotate(${isOffline ? 0 : state.heading}deg)` }}
                   >
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-[2px] border-r-[2px] border-b-[4px] border-l-transparent border-r-transparent border-b-orange-500" />
                   </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardTopBar from "@/components/dashboard/DashboardTopBar";
 import DashboardBottomBar from "@/components/dashboard/DashboardBottomBar";
@@ -15,7 +15,6 @@ export interface DashboardState {
   mode: RoverMode;
   connection: ConnectionStatus;
   roverState: "active" | "standby" | "emergency";
-  missionElapsed: number; // in seconds
   temperature: number;
   humidity: number;
   gasLevel: "normal" | "warning" | "critical";
@@ -27,17 +26,20 @@ export interface DashboardState {
   roll: number;
   isLive: boolean;
   roverIp: string;
+  // Session logging
+  sessionActive: boolean;
+  sessionStartTime: number | null;
+  sessionElapsed: number;
 }
 
 const initialState: DashboardState = {
-  heading: 142,
-  direction: "N",
-  mode: "autonomous",
+  heading: 0,
+  direction: "--",
+  mode: "manual",
   connection: "offline",
   roverState: "standby",
-  missionElapsed: 0,
-  temperature: 24.5,
-  humidity: 55,
+  temperature: 0,
+  humidity: 0,
   gasLevel: "normal",
   gas: "OFFLINE",
   accelX: 0,
@@ -47,6 +49,9 @@ const initialState: DashboardState = {
   roll: 0,
   isLive: true,
   roverIp: "http://192.168.4.1:8080",
+  sessionActive: false,
+  sessionStartTime: null,
+  sessionElapsed: 0,
 };
 
 /** Compute pitch & roll (degrees) from raw accelerometer values */
@@ -117,27 +122,33 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [state.isLive, state.roverIp]);
 
-  // Real Elapsed Time tick
+  // Session timer tick
   useEffect(() => {
-    if (state.connection !== "connected") return;
+    if (!state.sessionActive) return;
 
     const interval = setInterval(() => {
       setState((prev) => ({
         ...prev,
-        missionElapsed: prev.missionElapsed + 1,
+        sessionElapsed: prev.sessionStartTime
+          ? Math.floor((Date.now() - prev.sessionStartTime) / 1000)
+          : 0,
       }));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [state.connection]);
+  }, [state.sessionActive]);
 
-  const handleEmergencyStop = () => {
-    setState((prev) => ({
-      ...prev,
-      roverState: prev.roverState === "emergency" ? "standby" : "emergency",
-      mode: "manual",
-    }));
-  };
+  const handleToggleSession = useCallback(() => {
+    setState((prev) => {
+      if (prev.sessionActive) {
+        // Stop session
+        return { ...prev, sessionActive: false };
+      } else {
+        // Start session
+        return { ...prev, sessionActive: true, sessionStartTime: Date.now(), sessionElapsed: 0 };
+      }
+    });
+  }, []);
 
   const handleModeChange = (mode: RoverMode) => {
     setState((prev) => ({ ...prev, mode }));
@@ -153,13 +164,6 @@ export default function DashboardPage() {
     }, 2000);
   };
 
-  const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  };
-
   return (
     <div className="flex h-screen bg-gray-50 text-gray-900 overflow-hidden">
       <DashboardSidebar
@@ -173,16 +177,16 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <DashboardTopBar
           state={state}
-          missionElapsed={formatTime(state.missionElapsed)}
           onSimulateOffline={simulateOffline}
           onToggleLive={() => setState(s => ({ ...s, isLive: !s.isLive }))}
           onIpChange={(ip: string) => setState(s => ({ ...s, roverIp: ip }))}
+          onToggleSession={handleToggleSession}
         />
         
         <div className="flex-1 overflow-auto bg-gray-50">
           <OverviewPanel
             state={state}
-            onEmergencyStop={handleEmergencyStop}
+            onEmergencyStop={() => {}}
             onModeChange={handleModeChange}
           />
         </div>

@@ -11,7 +11,7 @@ interface Props {
 
 export default function RoverVisionPanel({ state }: Props) {
   const [recording, setRecording] = useState(false);
-  const [flipped, setFlipped] = useState(false);
+  const [rotation, setRotation] = useState(0);
   const isOffline = state.connection === "offline";
 
   const toggleRecord = async () => {
@@ -59,7 +59,8 @@ export default function RoverVisionPanel({ state }: Props) {
             <img 
               src={`/api/rover/video?ip=${encodeURIComponent(state.roverIp)}`} 
               alt="Live Feed" 
-              className={cn("w-full h-full object-cover transition-transform duration-300", flipped && "rotate-180")}
+              className="w-full h-full object-cover transition-transform duration-300"
+              style={{ transform: `rotate(${rotation}deg)` }}
               onError={(e) => { 
                 e.currentTarget.style.display = "none";
               }}
@@ -88,11 +89,11 @@ export default function RoverVisionPanel({ state }: Props) {
       {/* Controls */}
       <div className="flex items-center gap-3 px-5 py-3 border-t border-gray-100 bg-white flex-shrink-0">
         <button
-          onClick={() => setFlipped(!flipped)}
+          onClick={() => setRotation((prev) => (prev + 90) % 360)}
           disabled={isOffline}
           className="text-[11px] px-3.5 py-1.5 rounded-full font-bold transition-all bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 disabled:opacity-40"
         >
-          Flip Feed
+          Rotate 90°
         </button>
         <button
           onClick={toggleRecord}
