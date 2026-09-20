@@ -2,8 +2,6 @@
   <img src="minex/public/minex-rover.png" alt="MineX Rover" width="280" />
 </p>
 
-
-
 <h1 align="center">MineX — Intelligent Mine Rescue Rover</h1>
 
 <p align="center">
