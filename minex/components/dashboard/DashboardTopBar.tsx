@@ -13,7 +13,7 @@ interface Props {
   onRefresh?: () => void;
 }
 
-export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive, onIpChange, onToggleSession }: Props) {
+export default function DashboardTopBar({ state, onSimulateOffline, onToggleLive, onIpChange, onToggleSession, onRefresh }: Props) {
   const connectionConfig = {
     connected: { color: "text-orange-600", bg: "bg-gray-100", label: "Connected", icon: Wifi },
     reconnecting: { color: "text-yellow-600", bg: "bg-gray-100", label: "Reconnecting", icon: Loader2 },
