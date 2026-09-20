@@ -37,7 +37,7 @@ export default function DashboardSidebar({ collapsed, onToggle, activeView, onNa
         {!collapsed && (
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
-              <span className="text-gray-900 font-bold text-sm">M</span>
+              <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="text-xl font-bold text-gray-900">MineX</span>
           </Link>

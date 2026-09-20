@@ -1,15 +1,89 @@
 "use client";
 
-import { useState } from "react";
-import { AlertTriangle, Info, CheckCircle2, X } from "lucide-react";
-import { alerts as initialAlerts, Alert } from "@/lib/mock-data";
+import { useState, useEffect } from "react";
+import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { DashboardState } from "@/app/dashboard/page";
 
-export default function AlertCenter() {
-  const [alerts, setAlerts] = useState<Alert[]>(initialAlerts.slice(0, 3));
+interface Props {
+  state: DashboardState;
+}
+
+interface Alert {
+  id: string;
+  priority: "critical" | "high" | "medium" | "info";
+  title: string;
+  description: string;
+  timestamp: string;
+}
+
+export default function AlertCenter({ state }: Props) {
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const newAlerts: Alert[] = [];
+    const now = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+
+    if (state.gasLevel === "critical") {
+      newAlerts.push({
+        id: "gas-critical",
+        priority: "critical",
+        title: "Hazardous Gas Level Detected",
+        description: `Gas concentration reached critical levels: ${state.gas}. Evacuate immediately.`,
+        timestamp: now,
+      });
+    } else if (state.gasLevel === "warning") {
+      newAlerts.push({
+        id: "gas-warning",
+        priority: "high",
+        title: "Elevated Gas Level",
+        description: `Gas concentration elevated: ${state.gas}. Proceed with caution.`,
+        timestamp: now,
+      });
+    }
+
+    if (state.connection === "offline") {
+      newAlerts.push({
+        id: "connection-lost",
+        priority: "critical",
+        title: "Connection Lost",
+        description: "Telemetry stream disconnected. Attempting to reconnect...",
+        timestamp: now,
+      });
+    }
+
+    setAlerts(prev => {
+      // Keep existing alerts, add new ones if they don't exist and haven't been dismissed recently
+      const merged = [...prev];
+      newAlerts.forEach(na => {
+        if (!merged.find(a => a.id === na.id) && !dismissedAlerts.has(na.id)) {
+          merged.push(na);
+        }
+      });
+      // Remove alerts if their condition is no longer true
+      return merged.filter(a => newAlerts.find(na => na.id === a.id) || a.priority === 'info');
+    });
+
+  }, [state.gasLevel, state.connection, state.gas, dismissedAlerts]);
+
 
   const dismissAlert = (id: string) => {
     setAlerts(alerts.filter(a => a.id !== id));
+    setDismissedAlerts(prev => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    
+    // Automatically forget dismissed alerts after 10 seconds so they can trigger again if the condition persists
+    setTimeout(() => {
+      setDismissedAlerts(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }, 10000);
   };
 
   const getAlertStyles = (priority: string) => {

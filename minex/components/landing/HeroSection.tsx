@@ -77,8 +77,9 @@ export default function HeroSection() {
               src="/minex-rover.png"
               alt="MineX Rover"
               fill
-              className="object-contain drop-shadow-xl"
+              sizes="(max-width: 768px) 100vw, 400px"
               priority
+              className="object-contain drop-shadow-xl"
             />
           </div>
 

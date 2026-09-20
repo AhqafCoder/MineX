@@ -8,11 +8,11 @@ import TelemetryCharts from "@/components/dashboard/TelemetryCharts";
 import type { DashboardState } from "@/app/dashboard/page";
 
 const initialState: DashboardState = {
-  battery: 78, signal: 96, speed: 1.2, distance: 428, heading: 142,
-  direction: "N", motorTemp: 42, mode: "autonomous", connection: "connected", roverState: "active",
-  missionElapsed: 6138, humanDetected: true, humanConfidence: 94,
+  heading: 142,
+  direction: "N", mode: "autonomous", connection: "offline", roverState: "standby",
+  missionElapsed: 0,
   temperature: 31, humidity: 68, gasLevel: "normal", gas: "OFFLINE",
-  accelX: 0, accelY: 0, accelZ: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
+  accelX: 0, accelY: 0, accelZ: 0, pitch: 0, roll: 0, isLive: false, roverIp: "http://192.168.4.1:8080",
 };
 
 export default function TelemetryPage() {
@@ -22,11 +22,6 @@ export default function TelemetryPage() {
     const interval = setInterval(() => {
       setState((prev) => ({
         ...prev,
-        battery: Math.max(70, prev.battery - 0.005),
-        signal: Math.max(70, Math.min(99, prev.signal + (Math.random() - 0.5))),
-        speed: Math.max(0.5, Math.min(2, prev.speed + (Math.random() - 0.5) * 0.2)),
-        distance: prev.distance + prev.speed * 0.5,
-        motorTemp: Math.max(35, Math.min(65, prev.motorTemp + (Math.random() - 0.5) * 0.3)),
         missionElapsed: prev.missionElapsed + 1,
       }));
     }, 1000);
@@ -54,12 +49,12 @@ export default function TelemetryPage() {
             {/* Quick metrics */}
             <div className="grid grid-cols-3 md:grid-cols-6 gap-px bg-white">
               {[
-                { label: "BATTERY", value: `${state.battery.toFixed(0)}%`, color: "#00ff88" },
-                { label: "SPEED", value: `${state.speed.toFixed(1)} m/s`, color: "#00d4ff" },
-                { label: "DISTANCE", value: `${state.distance.toFixed(0)} m`, color: "#8892a4" },
-                { label: "HEADING", value: `${state.heading.toFixed(0)}°`, color: "#8892a4" },
-                { label: "SIGNAL", value: `${state.signal.toFixed(0)}%`, color: "#00d4ff" },
-                { label: "MOTOR", value: `${state.motorTemp.toFixed(0)}°C`, color: "#ffaa00" },
+                { label: "TEMP", value: `${state.temperature.toFixed(1)}°C`, color: "#00ff88" },
+                { label: "HUMIDITY", value: `${state.humidity.toFixed(0)}%`, color: "#00d4ff" },
+                { label: "GAS LEVEL", value: state.gasLevel, color: "#8892a4" },
+                { label: "PITCH", value: `${state.pitch.toFixed(1)}°`, color: "#8892a4" },
+                { label: "ROLL", value: `${state.roll.toFixed(1)}°`, color: "#00d4ff" },
+                { label: "HEADING", value: `${state.heading.toFixed(0)}°`, color: "#ffaa00" },
               ].map((m) => (
                 <div key={m.label} className="bg-gray-50 p-4">
                   <div className="text-mono text-xs text-[#4a5568] mb-2">{m.label}</div>

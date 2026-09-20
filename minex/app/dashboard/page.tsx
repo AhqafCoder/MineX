@@ -10,19 +10,12 @@ export type RoverMode = "manual" | "assisted" | "autonomous";
 export type ConnectionStatus = "connected" | "reconnecting" | "offline";
 
 export interface DashboardState {
-  battery: number;
-  signal: number;
-  speed: number;
-  distance: number;
   heading: number;
   direction: string;
-  motorTemp: number;
   mode: RoverMode;
   connection: ConnectionStatus;
   roverState: "active" | "standby" | "emergency";
   missionElapsed: number; // in seconds
-  humanDetected: boolean;
-  humanConfidence: number;
   temperature: number;
   humidity: number;
   gasLevel: "normal" | "warning" | "critical";
@@ -30,24 +23,19 @@ export interface DashboardState {
   accelX: number;
   accelY: number;
   accelZ: number;
+  pitch: number;
+  roll: number;
   isLive: boolean;
   roverIp: string;
 }
 
 const initialState: DashboardState = {
-  battery: 78,
-  signal: 96,
-  speed: 1.2,
-  distance: 428,
   heading: 142,
   direction: "N",
-  motorTemp: 42,
   mode: "autonomous",
-  connection: "connected",
-  roverState: "active",
-  missionElapsed: 6138,
-  humanDetected: true,
-  humanConfidence: 94,
+  connection: "offline",
+  roverState: "standby",
+  missionElapsed: 0,
   temperature: 24.5,
   humidity: 55,
   gasLevel: "normal",
@@ -55,23 +43,36 @@ const initialState: DashboardState = {
   accelX: 0,
   accelY: 0,
   accelZ: 0,
+  pitch: 0,
+  roll: 0,
   isLive: true,
   roverIp: "http://192.168.4.1:8080",
 };
+
+/** Compute pitch & roll (degrees) from raw accelerometer values */
+function computeOrientation(ax: number, ay: number, az: number) {
+  const pitch = Math.atan2(-ax, Math.sqrt(ay * ay + az * az)) * (180 / Math.PI);
+  const roll = Math.atan2(ay, az) * (180 / Math.PI);
+  return { pitch: Number.isFinite(pitch) ? pitch : 0, roll: Number.isFinite(roll) ? roll : 0 };
+}
 
 export default function DashboardPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [state, setState] = useState<DashboardState>(initialState);
 
-  // Live data fetching from actual Rover
+  // Live data fetching from actual Rover — through API proxy to avoid CORS
   useEffect(() => {
     if (!state.isLive) return;
 
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`${state.roverIp}/telemetry`, { cache: 'no-store' });
+        const res = await fetch(`/api/rover/telemetry?ip=${encodeURIComponent(state.roverIp)}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
+          if (data.error) {
+            setState(prev => ({ ...prev, connection: "offline", gas: "OFFLINE" }));
+            return;
+          }
           setState(prev => {
             const rawGas = typeof data.gas === "string" ? data.gas : String(data.gas ?? "OFFLINE");
             const gasLevel: "normal" | "warning" | "critical" = /UNHEALTHY|HAZARDOUS/.test(rawGas)
@@ -84,6 +85,10 @@ export default function DashboardPage() {
             const direction = typeof data.direction === "string" && data.direction ? data.direction : prev.direction;
             const temperature = Number.isFinite(data.temp) ? Number(data.temp) : prev.temperature;
             const humidity = Number.isFinite(data.hum) ? Number(data.hum) : prev.humidity;
+            const ax = Number.isFinite(data.ax) ? Number(data.ax) : prev.accelX;
+            const ay = Number.isFinite(data.ay) ? Number(data.ay) : prev.accelY;
+            const az = Number.isFinite(data.az) ? Number(data.az) : prev.accelZ;
+            const { pitch, roll } = computeOrientation(ax, ay, az);
 
             return {
               ...prev,
@@ -93,9 +98,11 @@ export default function DashboardPage() {
               direction,
               gas: rawGas,
               gasLevel,
-              accelX: Number.isFinite(data.ax) ? Number(data.ax) : prev.accelX,
-              accelY: Number.isFinite(data.ay) ? Number(data.ay) : prev.accelY,
-              accelZ: Number.isFinite(data.az) ? Number(data.az) : prev.accelZ,
+              accelX: ax,
+              accelY: ay,
+              accelZ: az,
+              pitch,
+              roll,
               connection: "connected",
               roverState: gasLevel === "critical" ? "emergency" : "active",
             };
@@ -110,34 +117,24 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [state.isLive, state.roverIp]);
 
-  // Live simulation tick
+  // Real Elapsed Time tick
   useEffect(() => {
-    if (state.isLive || state.roverState === "emergency" || state.connection !== "connected") return;
+    if (state.connection !== "connected") return;
 
     const interval = setInterval(() => {
-      setState((prev) => {
-        const isAutonomous = prev.mode === "autonomous";
-        return {
-          ...prev,
-          battery: Math.max(0, prev.battery - 0.005),
-          signal: Math.max(70, Math.min(99, prev.signal + (Math.random() - 0.5))),
-          speed: isAutonomous ? Math.max(0.5, Math.min(2, prev.speed + (Math.random() - 0.5) * 0.2)) : prev.speed,
-          distance: isAutonomous ? prev.distance + prev.speed * 0.5 : prev.distance,
-          heading: isAutonomous ? (prev.heading + (Math.random() - 0.5) * 0.5 + 360) % 360 : prev.heading,
-          motorTemp: Math.max(35, Math.min(65, prev.motorTemp + (Math.random() - 0.5) * 0.3)),
-          missionElapsed: prev.missionElapsed + 1,
-        };
-      });
+      setState((prev) => ({
+        ...prev,
+        missionElapsed: prev.missionElapsed + 1,
+      }));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [state.roverState, state.connection, state.mode]);
+  }, [state.connection]);
 
   const handleEmergencyStop = () => {
     setState((prev) => ({
       ...prev,
       roverState: prev.roverState === "emergency" ? "standby" : "emergency",
-      speed: 0,
       mode: "manual",
     }));
   };

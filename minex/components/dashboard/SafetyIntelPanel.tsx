@@ -1,6 +1,6 @@
 "use client";
 
-import { Shield, Thermometer, Droplets, Wind } from "lucide-react";
+import { Shield, Thermometer, Droplets, Wind, Navigation, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -17,89 +17,100 @@ export default function SafetyIntelPanel({ state }: Props) {
 
   const gasText = typeof state.gas === "string" && state.gas ? state.gas : "OFFLINE";
 
-  const statusColor = { normal: "bg-orange-600", warning: "bg-yellow-500", critical: "bg-red-500" };
-  const textColor = { normal: "text-orange-600", warning: "text-yellow-600", critical: "text-red-600" };
+  const statusColor = { normal: "bg-green-500", warning: "bg-yellow-500", critical: "bg-red-500" };
+  const textColor = { normal: "text-green-600", warning: "text-yellow-600", critical: "text-red-600" };
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-full flex flex-col">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white flex-shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center">
-            <Shield className="w-4 h-4 text-red-500" />
+          <div className="w-7 h-7 bg-red-50 rounded-lg flex items-center justify-center">
+            <Shield className="w-3.5 h-3.5 text-red-500" />
           </div>
           <div>
-            <h3 className="font-bold text-gray-900">Safety Intel</h3>
-            <p className="text-xs text-gray-500">Live hazard monitoring</p>
+            <h3 className="font-bold text-gray-900 text-sm">Safety Intel</h3>
+            <p className="text-[10px] text-gray-500">Live sensor readings</p>
           </div>
         </div>
       </div>
 
-      <div className="p-5 flex-1 flex flex-col gap-4">
-        {/* Human Detection */}
-        <div className={cn(
-          "p-4 rounded-2xl border transition-colors",
-          state.humanDetected ? "bg-gray-50 border-gray-100" : "bg-gray-50 border-gray-100"
-        )}>
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-semibold text-gray-900">Human Detection</span>
-            <span className={cn(
-              "text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider",
-              state.humanDetected ? "bg-gray-100 text-red-600" : "bg-gray-200 text-gray-500"
-            )}>
-              {state.humanDetected ? "Detected" : "Clear"}
-            </span>
-          </div>
-          {state.humanDetected && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="text-gray-500">Confidence</span>
-                <span className="font-bold text-red-600">{state.humanConfidence.toFixed(0)}%</span>
+      <div className="p-4 flex-1 flex flex-col gap-3 overflow-y-auto">
+        {/* Environment (DHT11) */}
+        <div>
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Environment (DHT11)</div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Thermometer className="w-3 h-3 text-gray-400" />
+                <span className="text-[10px] font-medium text-gray-400">Temp</span>
               </div>
-              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${state.humanConfidence}%` }} />
-              </div>
-              <div className="flex justify-between text-xs mt-2">
-                <span className="text-gray-500">Location</span>
-                <span className="font-semibold text-gray-900">Tunnel B-04 (8.4m)</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg font-bold text-gray-900">{state.temperature.toFixed(1)}<span className="text-xs text-gray-400">°C</span></span>
+                <div className={cn("w-1.5 h-1.5 rounded-full ml-auto", statusColor[envStatus.temp as keyof typeof statusColor])} />
               </div>
             </div>
-          )}
+            <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Droplets className="w-3 h-3 text-gray-400" />
+                <span className="text-[10px] font-medium text-gray-400">Humidity</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg font-bold text-gray-900">{state.humidity.toFixed(1)}<span className="text-xs text-gray-400">%</span></span>
+                <div className={cn("w-1.5 h-1.5 rounded-full ml-auto", statusColor[envStatus.humidity as keyof typeof statusColor])} />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Environment */}
-        <div className="space-y-3">
-          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Environment</div>
-          
-          <div className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100">
+        {/* Air Quality (MQ-135) */}
+        <div>
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Air Quality (MQ-135)</div>
+          <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Thermometer className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-500">Temperature</span>
+              <Wind className="w-4 h-4 text-gray-400" />
+              <div>
+                <div className={cn("text-sm font-bold", textColor[state.gasLevel])}>{gasText}</div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900">{state.temperature.toFixed(0)}°C</span>
-              <div className={cn("w-2 h-2 rounded-full", statusColor[envStatus.temp as keyof typeof statusColor])} />
-            </div>
+            <span className={cn(
+              "text-[10px] font-bold uppercase px-2 py-0.5 rounded-full",
+              state.gasLevel === "normal" ? "bg-green-50 text-green-600" :
+              state.gasLevel === "warning" ? "bg-yellow-50 text-yellow-600" :
+              "bg-red-50 text-red-600"
+            )}>
+              {state.gasLevel === "normal" ? "SAFE" : state.gasLevel === "warning" ? "WARNING" : "DANGER"}
+            </span>
           </div>
+        </div>
 
-          <div className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100">
-            <div className="flex items-center gap-2">
-              <Droplets className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-500">Humidity</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-900">{state.humidity.toFixed(0)}%</span>
-              <div className={cn("w-2 h-2 rounded-full", statusColor[envStatus.humidity as keyof typeof statusColor])} />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100">
-            <div className="flex items-center gap-2">
-              <Wind className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-500">Gas Level</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={cn("text-xs font-bold uppercase", textColor[state.gasLevel])}>{gasText}</span>
-              <div className={cn("w-2 h-2 rounded-full", statusColor[state.gasLevel])} />
+        {/* Motion (MPU-6050 + QMC5310) */}
+        <div>
+          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Motion (MPU-6050 + QMC5310)</div>
+          <div className="bg-gray-50 p-2.5 rounded-xl border border-gray-100">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+              <div>
+                <div className="text-[10px] text-gray-400 font-medium">Accelerometer (g)</div>
+                <div className="text-xs font-bold text-gray-900 font-mono">
+                  X: {state.accelX.toFixed(2)}  Y: {state.accelY.toFixed(2)}  Z: {state.accelZ.toFixed(2)}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="text-[10px] text-gray-400 font-medium">Heading</div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-gray-900">{state.heading.toFixed(0)}°</span>
+                    <span className="text-xs font-bold text-orange-600">{state.direction}</span>
+                  </div>
+                </div>
+                <div className="ml-auto w-6 h-6 rounded-full border border-gray-200 bg-white flex items-center justify-center relative">
+                  <div
+                    className="w-4 h-4 rounded-full border border-orange-400 relative transition-transform duration-300"
+                    style={{ transform: `rotate(${state.heading}deg)` }}
+                  >
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-[2px] border-r-[2px] border-b-[4px] border-l-transparent border-r-transparent border-b-orange-500" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
