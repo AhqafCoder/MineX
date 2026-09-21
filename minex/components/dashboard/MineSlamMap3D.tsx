@@ -126,6 +126,20 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     currentChamber: "Station Alpha",
   });
 
+  // ─── Mutable refs so the animation loop always reads current values ───
+  // Without these, the useEffect closure captures stale state, and worse,
+  // including them in the dependency array tears down the entire WebGL scene
+  // on every change (destroying OrbitControls interactivity).
+  const cameraModeRef = useRef(cameraMode);
+  const isPatrollingRef = useRef(isPatrolling);
+  const stateRef = useRef(state);
+  const slamStatsThrottleRef = useRef(0); // frame counter for throttled stats update
+
+  // Keep refs in sync with React state
+  useEffect(() => { cameraModeRef.current = cameraMode; }, [cameraMode]);
+  useEffect(() => { isPatrollingRef.current = isPatrolling; }, [isPatrolling]);
+  useEffect(() => { stateRef.current = state; }, [state]);
+
   // Scene references
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -144,11 +158,13 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
   const patrolProgressRef = useRef(0);
   const pathCurveRef = useRef<THREE.CatmullRomCurve3 | null>(null);
 
-  // Initialize Three.js scene
+  // Initialize Three.js scene — runs ONCE on mount only
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!mountRef.current) return;
-    const width = mountRef.current.clientWidth;
-    const height = mountRef.current.clientHeight;
+    const mount = mountRef.current;
+    const width = mount.clientWidth;
+    const height = mount.clientHeight;
 
     // 1. Scene setup
     const scene = new THREE.Scene();
@@ -168,7 +184,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     rendererRef.current = renderer;
-    mountRef.current.appendChild(renderer.domElement);
+    mount.appendChild(renderer.domElement);
 
     // 4. Orbit Controls
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -499,9 +515,9 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
 
     // 12. Handle Window Resize
     const handleResize = () => {
-      if (!mountRef.current || !renderer || !camera) return;
-      const w = mountRef.current.clientWidth;
-      const h = mountRef.current.clientHeight;
+      if (!mount || !renderer || !camera) return;
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -511,13 +527,20 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
 
     // 13. Main Animation & SLAM Loop
     let time = 0;
+    let frameCount = 0;
     const animate = () => {
       time += 0.015;
+      frameCount++;
       animFrameIdRef.current = requestAnimationFrame(animate);
+
+      // Read current values from refs (never stale)
+      const currentCameraMode = cameraModeRef.current;
+      const currentIsPatrolling = isPatrollingRef.current;
+      const currentState = stateRef.current;
 
       // Auto-Patrol Rover Animation along 3D Mine Spline
       if (pathCurveRef.current && roverGroupRef.current) {
-        if (isPatrolling) {
+        if (currentIsPatrolling) {
           patrolProgressRef.current = (patrolProgressRef.current + 0.0008) % 1;
         }
 
@@ -530,9 +553,9 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
         roverGroupRef.current.lookAt(nextPos);
 
         // Apply pitch/roll from live state if available
-        if (state && (state.pitch !== 0 || state.roll !== 0)) {
-          roverGroupRef.current.rotation.x += (state.pitch * Math.PI) / 180;
-          roverGroupRef.current.rotation.z += (state.roll * Math.PI) / 180;
+        if (currentState && (currentState.pitch !== 0 || currentState.roll !== 0)) {
+          roverGroupRef.current.rotation.x += (currentState.pitch * Math.PI) / 180;
+          roverGroupRef.current.rotation.z += (currentState.roll * Math.PI) / 180;
         }
 
         // Update LiDAR Scanner Rays in real time
@@ -555,22 +578,22 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
           posAttr.needsUpdate = true;
         }
 
-        // Camera Follow Modes
-        if (cameraRef.current && controlsRef.current) {
-          if (cameraMode === "chase") {
+        // Camera Follow Modes — only override when NOT in free orbit mode
+        if (camera && controls && currentCameraMode !== "orbit") {
+          if (currentCameraMode === "chase") {
             const chaseOffset = tangent.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
             const camTargetPos = currentPos.clone().add(chaseOffset);
-            cameraRef.current.position.lerp(camTargetPos, 0.05);
-            controlsRef.current.target.lerp(currentPos, 0.08);
-          } else if (cameraMode === "fpv") {
+            camera.position.lerp(camTargetPos, 0.05);
+            controls.target.lerp(currentPos, 0.08);
+          } else if (currentCameraMode === "fpv") {
             const fpvPos = currentPos.clone().add(new THREE.Vector3(0, 1.6, 0)).add(tangent.clone().multiplyScalar(1.2));
-            cameraRef.current.position.lerp(fpvPos, 0.1);
+            camera.position.lerp(fpvPos, 0.1);
             const lookTarget = fpvPos.clone().add(tangent.clone().multiplyScalar(15));
-            controlsRef.current.target.lerp(lookTarget, 0.1);
-          } else if (cameraMode === "topdown") {
+            controls.target.lerp(lookTarget, 0.1);
+          } else if (currentCameraMode === "topdown") {
             const topPos = new THREE.Vector3(currentPos.x, 40, currentPos.z);
-            cameraRef.current.position.lerp(topPos, 0.05);
-            controlsRef.current.target.lerp(currentPos, 0.08);
+            camera.position.lerp(topPos, 0.05);
+            controls.target.lerp(currentPos, 0.08);
           }
         }
 
@@ -585,19 +608,21 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
           }
         });
 
-        // Update SLAM Stats periodically
-        const yawDeg = Math.round(((Math.atan2(tangent.x, tangent.z) * 180) / Math.PI + 360) % 360);
-        setSlamStats({
-          pointCount: 16420 + Math.floor(t * 1200),
-          mappedArea: 1850 + Math.floor(t * 180),
-          loopClosures: 18 + Math.floor(t * 4),
-          roverX: Number(currentPos.x.toFixed(1)),
-          roverY: Number(currentPos.y.toFixed(1)),
-          roverZ: Number(currentPos.z.toFixed(1)),
-          roverYaw: yawDeg,
-          currentGas: `${nearestSpot.type} (${nearestSpot.ppm} ppm)`,
-          currentChamber: nearestSpot.chamber,
-        });
+        // Update SLAM Stats every 10 frames to avoid excessive re-renders
+        if (frameCount % 10 === 0) {
+          const yawDeg = Math.round(((Math.atan2(tangent.x, tangent.z) * 180) / Math.PI + 360) % 360);
+          setSlamStats({
+            pointCount: 16420 + Math.floor(t * 1200),
+            mappedArea: 1850 + Math.floor(t * 180),
+            loopClosures: 18 + Math.floor(t * 4),
+            roverX: Number(currentPos.x.toFixed(1)),
+            roverY: Number(currentPos.y.toFixed(1)),
+            roverZ: Number(currentPos.z.toFixed(1)),
+            roverYaw: yawDeg,
+            currentGas: `${nearestSpot.type} (${nearestSpot.ppm} ppm)`,
+            currentChamber: nearestSpot.chamber,
+          });
+        }
       }
 
       // Pulse gas nodes
@@ -610,8 +635,8 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
         });
       }
 
-      controlsRef.current?.update();
-      rendererRef.current?.render(scene, cameraRef.current!);
+      controls.update();
+      renderer.render(scene, camera);
     };
 
     animate();
@@ -619,12 +644,12 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     return () => {
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       window.removeEventListener("resize", handleResize);
-      if (rendererRef.current?.domElement && mountRef.current) {
-        mountRef.current.removeChild(rendererRef.current.domElement);
+      if (renderer.domElement && mount) {
+        mount.removeChild(renderer.domElement);
       }
-      rendererRef.current?.dispose();
+      renderer.dispose();
     };
-  }, [state, isPatrolling, cameraMode]);
+  }, []); // ← Empty dependency array: scene initialises once, never torn down
 
   // Update visibility layers
   useEffect(() => {
@@ -636,25 +661,30 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     if (archesGroupRef.current) archesGroupRef.current.visible = showArches;
   }, [showPointCloud, showTunnelMesh, showGasMap, showTrajectory, showLidarBeams, showArches]);
 
-  // Camera preset handler
-  const setCameraPreset = (mode: "orbit" | "topdown" | "chase" | "fpv") => {
+  // Camera preset handler — directly moves camera+controls without re-mounting
+  const setCameraPreset = useCallback((mode: "orbit" | "topdown" | "chase" | "fpv") => {
     setCameraMode(mode);
+    // cameraModeRef is synced via the useEffect above
+
     if (!cameraRef.current || !controlsRef.current) return;
 
     if (mode === "orbit") {
       cameraRef.current.position.set(-35, 25, 45);
       controlsRef.current.target.set(0, -5, 0);
+      controlsRef.current.update();
     } else if (mode === "topdown") {
       cameraRef.current.position.set(0, 65, 0);
       controlsRef.current.target.set(0, -5, 0);
+      controlsRef.current.update();
     }
-  };
+    // "chase" and "fpv" are driven by the animation loop via cameraModeRef
+  }, []);
 
-  const resetCamera = () => {
+  const resetCamera = useCallback(() => {
     setCameraPreset("orbit");
-  };
+  }, [setCameraPreset]);
 
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (!containerRef.current) return;
     if (!document.fullscreenElement) {
       containerRef.current.requestFullscreen().catch(() => {});
@@ -663,7 +693,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
       document.exitFullscreen().catch(() => {});
       setIsFullscreen(false);
     }
-  };
+  }, []);
 
   return (
     <div
@@ -941,3 +971,4 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     </div>
   );
 }
+
