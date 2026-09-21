@@ -199,7 +199,6 @@ export default function DashboardPage() {
         <div className="flex-1 overflow-auto bg-gray-50">
           <OverviewPanel
             state={state}
-            onEmergencyStop={() => {}}
             onModeChange={handleModeChange}
           />
         </div>

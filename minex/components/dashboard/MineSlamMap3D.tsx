@@ -28,22 +28,36 @@ interface Props {
   heightClass?: string;
 }
 
-// Tunnel waypoints for the mine network
+// Tunnel waypoints for the mine network (expanded multi-level mine)
 const TUNNEL_NODES = [
-  { id: "A0", x: -40, y: 0, z: 0, label: "Mine Entrance / Portal" },
-  { id: "A1", x: -25, y: -2, z: 0, label: "Main Incline Shaft" },
-  { id: "A2", x: -10, y: -4, z: 0, label: "Station Alpha (Sub-Level 1)" },
+  // Main shaft (Level 1)
+  { id: "A0", x: -50, y: 0, z: 0, label: "Mine Entrance / Portal" },
+  { id: "A1", x: -35, y: -2, z: 0, label: "Main Incline Shaft" },
+  { id: "A2", x: -15, y: -4, z: 0, label: "Station Alpha (Sub-Level 1)" },
   { id: "A3", x: 10, y: -6, z: 0, label: "Central Drift Junction" },
   { id: "A4", x: 30, y: -8, z: 0, label: "Extraction Stope 101" },
-  { id: "A5", x: 45, y: -10, z: 0, label: "Dead End / Deep Heading" },
+  { id: "A5", x: 50, y: -10, z: 0, label: "Dead End / Deep Heading" },
   // North branch
-  { id: "B1", x: 10, y: -6, z: 20, label: "North Crosscut 1" },
-  { id: "B2", x: 25, y: -7, z: 35, label: "Ventilation Shaft North" },
-  { id: "B3", x: 40, y: -9, z: 30, label: "Abandoned Stope N-2" },
+  { id: "B1", x: 10, y: -6, z: 22, label: "North Crosscut 1" },
+  { id: "B2", x: 25, y: -7, z: 40, label: "Ventilation Shaft North" },
+  { id: "B3", x: 45, y: -9, z: 35, label: "Abandoned Stope N-2" },
   // South branch
-  { id: "C1", x: -10, y: -4, z: -20, label: "South Haulage Drift" },
-  { id: "C2", x: 5, y: -5, z: -35, label: "Substation South" },
-  { id: "C3", x: 25, y: -7, z: -25, label: "Ore Pass 4B" },
+  { id: "C1", x: -15, y: -4, z: -22, label: "South Haulage Drift" },
+  { id: "C2", x: 5, y: -5, z: -40, label: "Substation South" },
+  { id: "C3", x: 28, y: -7, z: -30, label: "Ore Pass 4B" },
+  // Deep level (Level 2)
+  { id: "D1", x: 10, y: -14, z: 0, label: "Level 2 – Decline Access" },
+  { id: "D2", x: 30, y: -16, z: 0, label: "Level 2 – Loading Bay" },
+  { id: "D3", x: 50, y: -18, z: 0, label: "Level 2 – Stope Face 202" },
+  // East wing
+  { id: "E1", x: 30, y: -8, z: 18, label: "East Crosscut Connector" },
+  { id: "E2", x: 50, y: -10, z: 28, label: "East Ore Body" },
+  // West connector (connects south and deep level)
+  { id: "F1", x: -15, y: -8, z: -22, label: "West Ramp Entry" },
+  { id: "F2", x: -15, y: -12, z: -10, label: "Pump Station W-1" },
+  // Ventilation rise
+  { id: "V1", x: 25, y: -3, z: 40, label: "Vent Rise Surface" },
+  { id: "V2", x: 50, y: -5, z: 0, label: "Return Air Raise" },
 ];
 
 // Gas concentration hotspots in 3D space
@@ -52,7 +66,7 @@ interface GasHotspot {
   x: number;
   y: number;
   z: number;
-  type: "CH4 (Methane)" | "CO (Carbon Monoxide)" | "H2S (Hydrogen Sulfide)" | "Normal Air";
+  type: "CH4 (Methane)" | "CO (Carbon Monoxide)" | "H2S (Hydrogen Sulfide)" | "Normal Air" | "NO2 (Nitrogen Dioxide)" | "SO2 (Sulfur Dioxide)";
   level: "safe" | "warning" | "critical";
   ppm: number;
   radius: number;
@@ -60,39 +74,77 @@ interface GasHotspot {
 }
 
 const GAS_HOTSPOTS: GasHotspot[] = [
-  { id: "G1", x: -40, y: 0, z: 0, type: "Normal Air", level: "safe", ppm: 18, radius: 8, chamber: "Portal Area" },
-  { id: "G2", x: -10, y: -4, z: 0, type: "Normal Air", level: "safe", ppm: 32, radius: 9, chamber: "Station Alpha" },
-  { id: "G3", x: 10, y: -6, z: 20, type: "CO (Carbon Monoxide)", level: "warning", ppm: 85, radius: 7, chamber: "North Crosscut 1" },
-  { id: "G4", x: 40, y: -9, z: 30, type: "CH4 (Methane)", level: "critical", ppm: 240, radius: 10, chamber: "Abandoned Stope N-2" },
-  { id: "G5", x: 30, y: -8, z: 0, type: "CO (Carbon Monoxide)", level: "warning", ppm: 72, radius: 8, chamber: "Extraction Stope 101" },
-  { id: "G6", x: 45, y: -10, z: 0, type: "CH4 (Methane)", level: "critical", ppm: 310, radius: 11, chamber: "Deep Heading" },
-  { id: "G7", x: 5, y: -5, z: -35, type: "H2S (Hydrogen Sulfide)", level: "warning", ppm: 45, radius: 7, chamber: "Substation South" },
+  // Main shaft
+  { id: "G1", x: -50, y: 0, z: 0, type: "Normal Air", level: "safe", ppm: 12, radius: 8, chamber: "Portal Area" },
+  { id: "G2", x: -15, y: -4, z: 0, type: "Normal Air", level: "safe", ppm: 28, radius: 9, chamber: "Station Alpha" },
+  { id: "G3", x: 30, y: -8, z: 0, type: "CO (Carbon Monoxide)", level: "warning", ppm: 72, radius: 8, chamber: "Extraction Stope 101" },
+  { id: "G4", x: 50, y: -10, z: 0, type: "CH4 (Methane)", level: "critical", ppm: 310, radius: 11, chamber: "Deep Heading" },
+  // North branch
+  { id: "G5", x: 10, y: -6, z: 22, type: "CO (Carbon Monoxide)", level: "warning", ppm: 85, radius: 7, chamber: "North Crosscut 1" },
+  { id: "G6", x: 45, y: -9, z: 35, type: "CH4 (Methane)", level: "critical", ppm: 240, radius: 10, chamber: "Abandoned Stope N-2" },
+  { id: "G7", x: 25, y: -7, z: 40, type: "Normal Air", level: "safe", ppm: 38, radius: 7, chamber: "Vent Shaft North" },
+  // South branch
+  { id: "G8", x: 5, y: -5, z: -40, type: "H2S (Hydrogen Sulfide)", level: "warning", ppm: 45, radius: 7, chamber: "Substation South" },
+  { id: "G9", x: 28, y: -7, z: -30, type: "CO (Carbon Monoxide)", level: "warning", ppm: 65, radius: 8, chamber: "Ore Pass 4B" },
+  // Deep level
+  { id: "G10", x: 10, y: -14, z: 0, type: "NO2 (Nitrogen Dioxide)", level: "warning", ppm: 55, radius: 8, chamber: "Level 2 Decline" },
+  { id: "G11", x: 30, y: -16, z: 0, type: "CH4 (Methane)", level: "critical", ppm: 280, radius: 10, chamber: "Loading Bay L2" },
+  { id: "G12", x: 50, y: -18, z: 0, type: "CH4 (Methane)", level: "critical", ppm: 420, radius: 12, chamber: "Stope Face 202" },
+  // East wing
+  { id: "G13", x: 50, y: -10, z: 28, type: "SO2 (Sulfur Dioxide)", level: "warning", ppm: 52, radius: 7, chamber: "East Ore Body" },
+  // West connector
+  { id: "G14", x: -15, y: -12, z: -10, type: "Normal Air", level: "safe", ppm: 22, radius: 7, chamber: "Pump Station W-1" },
+  // Near portal (fresh air)
+  { id: "G15", x: -35, y: -2, z: 0, type: "Normal Air", level: "safe", ppm: 8, radius: 9, chamber: "Incline Shaft" },
 ];
 
-// Path waypoints for rover patrol loop
+// Path waypoints for rover patrol loop (extended to cover all branches)
 const ROVER_PATROL_PATH = [
-  new THREE.Vector3(-40, 0, 0),
-  new THREE.Vector3(-25, -2, 0),
-  new THREE.Vector3(-10, -4, 0),
+  // Start at portal, go down main shaft
+  new THREE.Vector3(-50, 0, 0),
+  new THREE.Vector3(-35, -2, 0),
+  new THREE.Vector3(-15, -4, 0),
   new THREE.Vector3(10, -6, 0),
-  new THREE.Vector3(10, -6, 20),
-  new THREE.Vector3(25, -7, 35),
-  new THREE.Vector3(40, -9, 30),
-  new THREE.Vector3(25, -7, 35),
-  new THREE.Vector3(10, -6, 20),
+  // North branch exploration
+  new THREE.Vector3(10, -6, 22),
+  new THREE.Vector3(25, -7, 40),
+  new THREE.Vector3(45, -9, 35),
+  new THREE.Vector3(25, -7, 40),
+  new THREE.Vector3(10, -6, 22),
   new THREE.Vector3(10, -6, 0),
+  // Continue main shaft east
   new THREE.Vector3(30, -8, 0),
-  new THREE.Vector3(45, -10, 0),
+  // East wing detour
+  new THREE.Vector3(30, -8, 18),
+  new THREE.Vector3(50, -10, 28),
+  new THREE.Vector3(30, -8, 18),
   new THREE.Vector3(30, -8, 0),
+  // Deep heading
+  new THREE.Vector3(50, -10, 0),
+  new THREE.Vector3(30, -8, 0),
+  // Drop to Level 2
   new THREE.Vector3(10, -6, 0),
-  new THREE.Vector3(-10, -4, 0),
-  new THREE.Vector3(-10, -4, -20),
-  new THREE.Vector3(5, -5, -35),
-  new THREE.Vector3(25, -7, -25),
-  new THREE.Vector3(5, -5, -35),
-  new THREE.Vector3(-10, -4, -20),
-  new THREE.Vector3(-10, -4, 0),
-  new THREE.Vector3(-25, -2, 0),
+  new THREE.Vector3(10, -14, 0),
+  new THREE.Vector3(30, -16, 0),
+  new THREE.Vector3(50, -18, 0),
+  new THREE.Vector3(30, -16, 0),
+  new THREE.Vector3(10, -14, 0),
+  new THREE.Vector3(10, -6, 0),
+  // Back to main and south branch
+  new THREE.Vector3(-15, -4, 0),
+  new THREE.Vector3(-15, -4, -22),
+  new THREE.Vector3(5, -5, -40),
+  new THREE.Vector3(28, -7, -30),
+  new THREE.Vector3(5, -5, -40),
+  new THREE.Vector3(-15, -4, -22),
+  // West connector
+  new THREE.Vector3(-15, -8, -22),
+  new THREE.Vector3(-15, -12, -10),
+  new THREE.Vector3(-15, -8, -22),
+  new THREE.Vector3(-15, -4, -22),
+  new THREE.Vector3(-15, -4, 0),
+  // Return to portal
+  new THREE.Vector3(-35, -2, 0),
 ];
 
 export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Props) {
@@ -115,14 +167,14 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
 
   // SLAM Realtime Stats
   const [slamStats, setSlamStats] = useState({
-    pointCount: 16420,
-    mappedArea: 1850, // m²
-    loopClosures: 18,
-    roverX: -10.0,
+    pointCount: 32840,
+    mappedArea: 3200, // m²
+    loopClosures: 34,
+    roverX: -15.0,
     roverY: -4.0,
     roverZ: 0.0,
     roverYaw: 0,
-    currentGas: "Normal (32 ppm)",
+    currentGas: "Normal (28 ppm)",
     currentChamber: "Station Alpha",
   });
 
@@ -174,7 +226,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
 
     // 2. Camera setup
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.set(-35, 25, 45);
+    camera.position.set(-45, 35, 55);
     cameraRef.current = camera;
 
     // 3. Renderer setup
@@ -193,7 +245,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     controls.maxPolarAngle = Math.PI / 2 + 0.2; // Allow slight upward angle inside mine
     controls.minDistance = 3;
     controls.maxDistance = 180;
-    controls.target.set(0, -5, 0);
+    controls.target.set(0, -8, 0);
     controlsRef.current = controls;
 
     // 5. Lighting
@@ -205,8 +257,8 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     scene.add(dirLight);
 
     // Underground grid floor plane
-    const gridHelper = new THREE.GridHelper(120, 40, 0x24324f, 0x111927);
-    gridHelper.position.y = -13;
+    const gridHelper = new THREE.GridHelper(160, 50, 0x24324f, 0x111927);
+    gridHelper.position.y = -22;
     scene.add(gridHelper);
 
     // 6. Build 3D Mine Tunnel Network
@@ -215,29 +267,58 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     tunnelGroupRef.current = tunnelGroup;
     archesGroupRef.current = archesGroup;
 
-    // Generate CatmullRom splines for tunnels
+    // Generate CatmullRom splines for tunnels — expanded multi-level mine
     const mainBranch = [
-      new THREE.Vector3(-40, 0, 0),
-      new THREE.Vector3(-25, -2, 0),
-      new THREE.Vector3(-10, -4, 0),
+      new THREE.Vector3(-50, 0, 0),
+      new THREE.Vector3(-35, -2, 0),
+      new THREE.Vector3(-15, -4, 0),
       new THREE.Vector3(10, -6, 0),
       new THREE.Vector3(30, -8, 0),
-      new THREE.Vector3(45, -10, 0),
+      new THREE.Vector3(50, -10, 0),
     ];
     const northBranch = [
       new THREE.Vector3(10, -6, 0),
-      new THREE.Vector3(10, -6, 20),
-      new THREE.Vector3(25, -7, 35),
-      new THREE.Vector3(40, -9, 30),
+      new THREE.Vector3(10, -6, 22),
+      new THREE.Vector3(25, -7, 40),
+      new THREE.Vector3(45, -9, 35),
     ];
     const southBranch = [
-      new THREE.Vector3(-10, -4, 0),
-      new THREE.Vector3(-10, -4, -20),
-      new THREE.Vector3(5, -5, -35),
-      new THREE.Vector3(25, -7, -25),
+      new THREE.Vector3(-15, -4, 0),
+      new THREE.Vector3(-15, -4, -22),
+      new THREE.Vector3(5, -5, -40),
+      new THREE.Vector3(28, -7, -30),
+    ];
+    // Deep level (Level 2) — vertical decline then horizontal
+    const deepLevelDecline = [
+      new THREE.Vector3(10, -6, 0),
+      new THREE.Vector3(10, -10, 0),
+      new THREE.Vector3(10, -14, 0),
+    ];
+    const deepLevelDrift = [
+      new THREE.Vector3(10, -14, 0),
+      new THREE.Vector3(30, -16, 0),
+      new THREE.Vector3(50, -18, 0),
+    ];
+    // East wing connector
+    const eastWing = [
+      new THREE.Vector3(30, -8, 0),
+      new THREE.Vector3(30, -8, 18),
+      new THREE.Vector3(50, -10, 28),
+    ];
+    // West connector ramp (south branch down to pump station)
+    const westConnector = [
+      new THREE.Vector3(-15, -4, -22),
+      new THREE.Vector3(-15, -8, -22),
+      new THREE.Vector3(-15, -12, -10),
+    ];
+    // Ventilation shaft rise (north branch up to surface)
+    const ventShaft = [
+      new THREE.Vector3(25, -7, 40),
+      new THREE.Vector3(25, -5, 40),
+      new THREE.Vector3(25, -3, 40),
     ];
 
-    const branches = [mainBranch, northBranch, southBranch];
+    const branches = [mainBranch, northBranch, southBranch, deepLevelDecline, deepLevelDrift, eastWing, westConnector, ventShaft];
 
     // Helper to create hollow tunnel tube mesh & arches
     branches.forEach((pts) => {
@@ -266,7 +347,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
       tunnelGroup.add(new THREE.Mesh(wireGeo, wireMat));
 
       // Add steel support arches along the tunnel
-      const sampleCount = Math.floor(curve.getLength() / 4.5);
+      const sampleCount = Math.max(2, Math.floor(curve.getLength() / 4.5));
       for (let i = 0; i <= sampleCount; i++) {
         const t = i / sampleCount;
         const pos = curve.getPoint(t);
@@ -286,8 +367,8 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     scene.add(tunnelGroup);
     scene.add(archesGroup);
 
-    // 7. Create SLAM Point Cloud (16,000+ points sampled around tunnel surfaces + random rock features)
-    const pointsCount = 16000;
+    // 7. Create SLAM Point Cloud (32,000+ points sampled around tunnel surfaces + random rock features)
+    const pointsCount = 32000;
     const pointPositions = new Float32Array(pointsCount * 3);
     const pointColors = new Float32Array(pointsCount * 3);
 
@@ -612,9 +693,9 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
         if (frameCount % 10 === 0) {
           const yawDeg = Math.round(((Math.atan2(tangent.x, tangent.z) * 180) / Math.PI + 360) % 360);
           setSlamStats({
-            pointCount: 16420 + Math.floor(t * 1200),
-            mappedArea: 1850 + Math.floor(t * 180),
-            loopClosures: 18 + Math.floor(t * 4),
+            pointCount: 32840 + Math.floor(t * 2400),
+            mappedArea: 3200 + Math.floor(t * 320),
+            loopClosures: 34 + Math.floor(t * 8),
             roverX: Number(currentPos.x.toFixed(1)),
             roverY: Number(currentPos.y.toFixed(1)),
             roverZ: Number(currentPos.z.toFixed(1)),
@@ -669,12 +750,12 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     if (!cameraRef.current || !controlsRef.current) return;
 
     if (mode === "orbit") {
-      cameraRef.current.position.set(-35, 25, 45);
-      controlsRef.current.target.set(0, -5, 0);
+      cameraRef.current.position.set(-45, 35, 55);
+      controlsRef.current.target.set(0, -8, 0);
       controlsRef.current.update();
     } else if (mode === "topdown") {
-      cameraRef.current.position.set(0, 65, 0);
-      controlsRef.current.target.set(0, -5, 0);
+      cameraRef.current.position.set(0, 75, 0);
+      controlsRef.current.target.set(0, -8, 0);
       controlsRef.current.update();
     }
     // "chase" and "fpv" are driven by the animation loop via cameraModeRef

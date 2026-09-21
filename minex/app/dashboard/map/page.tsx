@@ -45,13 +45,18 @@ const initialState: DashboardState = {
 };
 
 const CHAMBER_STATUS = [
-  { id: "SEC-01", name: "Portal Entrance", depth: "-0.0m", gas: "Safe (18 ppm)", gasType: "Normal Air", status: "cleared", points: "3,420" },
-  { id: "SEC-02", name: "Station Alpha (Sub-L1)", depth: "-4.0m", gas: "Safe (32 ppm)", gasType: "Normal Air", status: "cleared", points: "4,180" },
-  { id: "SEC-03", name: "North Crosscut 1", depth: "-6.2m", gas: "Warning (85 ppm)", gasType: "CO (Carbon Monoxide)", status: "warning", points: "2,840" },
-  { id: "SEC-04", name: "Abandoned Stope N-2", depth: "-9.1m", gas: "Critical (240 ppm)", gasType: "CH4 (Methane)", status: "critical", points: "3,110" },
-  { id: "SEC-05", name: "Extraction Stope 101", depth: "-8.0m", gas: "Warning (72 ppm)", gasType: "CO (Carbon Monoxide)", status: "warning", points: "3,650" },
-  { id: "SEC-06", name: "Deep Heading Dead-End", depth: "-10.0m", gas: "Critical (310 ppm)", gasType: "CH4 (Methane)", status: "critical", points: "1,980" },
-  { id: "SEC-07", name: "Substation South", depth: "-5.0m", gas: "Warning (45 ppm)", gasType: "H2S (Hydrogen Sulfide)", status: "warning", points: "2,440" },
+  { id: "SEC-01", name: "Portal Entrance", depth: "-0.0m", gas: "Safe (12 ppm)", gasType: "Normal Air", status: "cleared", points: "4,120" },
+  { id: "SEC-02", name: "Station Alpha (Sub-L1)", depth: "-4.0m", gas: "Safe (28 ppm)", gasType: "Normal Air", status: "cleared", points: "4,680" },
+  { id: "SEC-03", name: "North Crosscut 1", depth: "-6.2m", gas: "Warning (85 ppm)", gasType: "CO (Carbon Monoxide)", status: "warning", points: "3,240" },
+  { id: "SEC-04", name: "Abandoned Stope N-2", depth: "-9.1m", gas: "Critical (240 ppm)", gasType: "CH4 (Methane)", status: "critical", points: "3,510" },
+  { id: "SEC-05", name: "Extraction Stope 101", depth: "-8.0m", gas: "Warning (72 ppm)", gasType: "CO (Carbon Monoxide)", status: "warning", points: "4,150" },
+  { id: "SEC-06", name: "Deep Heading Dead-End", depth: "-10.0m", gas: "Critical (310 ppm)", gasType: "CH4 (Methane)", status: "critical", points: "2,380" },
+  { id: "SEC-07", name: "Substation South", depth: "-5.0m", gas: "Warning (45 ppm)", gasType: "H2S (Hydrogen Sulfide)", status: "warning", points: "2,840" },
+  { id: "SEC-08", name: "Level 2 – Decline Access", depth: "-14.0m", gas: "Warning (55 ppm)", gasType: "NO2 (Nitrogen Dioxide)", status: "warning", points: "2,220" },
+  { id: "SEC-09", name: "Level 2 – Loading Bay", depth: "-16.0m", gas: "Critical (280 ppm)", gasType: "CH4 (Methane)", status: "critical", points: "2,960" },
+  { id: "SEC-10", name: "Level 2 – Stope Face 202", depth: "-18.0m", gas: "Critical (420 ppm)", gasType: "CH4 (Methane)", status: "critical", points: "1,840" },
+  { id: "SEC-11", name: "East Ore Body", depth: "-10.0m", gas: "Warning (52 ppm)", gasType: "SO2 (Sulfur Dioxide)", status: "warning", points: "2,560" },
+  { id: "SEC-12", name: "Pump Station W-1", depth: "-12.0m", gas: "Safe (22 ppm)", gasType: "Normal Air", status: "cleared", points: "1,940" },
 ];
 
 export default function MapPage() {
@@ -160,11 +165,11 @@ export default function MapPage() {
                 <div className="grid grid-cols-2 gap-3 text-center">
                   <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                     <div className="text-[10px] text-gray-400 font-bold uppercase">Total Mapped</div>
-                    <div className="text-lg font-bold text-gray-900 font-mono">1,850 m²</div>
+                    <div className="text-lg font-bold text-gray-900 font-mono">3,200 m²</div>
                   </div>
                   <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                     <div className="text-[10px] text-gray-400 font-bold uppercase">Shaft Depth</div>
-                    <div className="text-lg font-bold text-gray-900 font-mono">-10.4 m</div>
+                    <div className="text-lg font-bold text-gray-900 font-mono">-18.0 m</div>
                   </div>
                 </div>
               </div>
@@ -176,7 +181,7 @@ export default function MapPage() {
                 </div>
                 <div className="flex justify-between text-gray-500">
                   <span>Loop Closures Confirmed:</span>
-                  <span className="font-semibold text-emerald-600">18 / 18 OK</span>
+                  <span className="font-semibold text-emerald-600">34 / 34 OK</span>
                 </div>
                 <div className="flex justify-between text-gray-500">
                   <span>Odometry Drift Error:</span>
@@ -193,7 +198,7 @@ export default function MapPage() {
                   <p className="text-[11px] text-gray-500">Spatial zone gas readings mapped along rover trajectory</p>
                 </div>
                 <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg">
-                  7 Identified Zones
+                  12 Identified Zones
                 </span>
               </div>
 

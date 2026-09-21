@@ -8,11 +8,10 @@ import type { DashboardState, RoverMode } from "@/app/dashboard/page";
 
 interface Props {
   state: DashboardState;
-  onEmergencyStop: () => void;
   onModeChange: (mode: RoverMode) => void;
 }
 
-export default function OverviewPanel({ state, onEmergencyStop, onModeChange }: Props) {
+export default function OverviewPanel({ state, onModeChange }: Props) {
   return (
     <div className="p-4 pb-2 flex flex-col gap-4">
       {/* Top Row: Camera | Safety Intel | Rover Control — equal thirds */}
@@ -21,7 +20,6 @@ export default function OverviewPanel({ state, onEmergencyStop, onModeChange }: 
         <SafetyIntelPanel state={state} />
         <RoverControlPanel
           state={state}
-          onEmergencyStop={onEmergencyStop}
           onModeChange={onModeChange}
         />
       </div>
