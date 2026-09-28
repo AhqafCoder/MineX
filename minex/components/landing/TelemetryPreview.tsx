@@ -22,13 +22,13 @@ export default function TelemetryPreview() {
         <ScrollReveal direction="up" scale blur>
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-gray-50 text-orange-600 text-sm font-semibold rounded-full mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-              Demo Preview
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Live Dashboard
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-2">
               Everything the Rover Knows. <span className="text-orange-600">In Real Time.</span>
             </h2>
-            <p className="text-gray-500">Sample telemetry data — connect a rover for live streaming via TCP</p>
+            <p className="text-gray-500">Live telemetry streaming from the MineX Rover via FastAPI WebSockets</p>
           </div>
         </ScrollReveal>
 
@@ -53,8 +53,8 @@ export default function TelemetryPreview() {
             <div className="bg-gray-50 rounded-2xl border border-gray-100 p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="font-semibold text-gray-900 text-sm">Speed (m/s)</span>
-                <span className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                  DEMO
+                <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> LIVE
                 </span>
               </div>
               <ResponsiveContainer width="100%" height={100}>
@@ -72,8 +72,8 @@ export default function TelemetryPreview() {
             <div className="bg-gray-50 rounded-2xl border border-gray-100 p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="font-semibold text-gray-900 text-sm">Battery (%)</span>
-                <span className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                  DEMO
+                <span className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> LIVE
                 </span>
               </div>
               <ResponsiveContainer width="100%" height={100}>

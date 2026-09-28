@@ -14,10 +14,10 @@ export default function HeroSection() {
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
 
   const stats = [
-    { icon: Bot, label: "AI Human Detection", sub: "Real-Time" },
-    { icon: Radio, label: "Offline-First", sub: "Architecture" },
-    { icon: ShieldCheck, label: "Fault-Tolerant", sub: "System" },
-    { icon: Microscope, label: "Multi-Sensor", sub: "Perception" },
+    { icon: Bot, label: "AI Survivor Detection", sub: "Thermal + Vision" },
+    { icon: Radio, label: "Wi-Fi HaLow", sub: "Mesh Network" },
+    { icon: ShieldCheck, label: "DGMS-Compliant", sub: "Safety First" },
+    { icon: Microscope, label: "Advanced SLAM", sub: "3D Mapping" },
   ];
 
   return (

@@ -5,12 +5,12 @@ import ScrollReveal from "./ScrollReveal";
 import type { LucideIcon } from "lucide-react";
 
 const flow: { icon: LucideIcon; label: string; sub: string }[] = [
-  { icon: Bot, label: "Rover", sub: "MINEX-01" },
-  { icon: Microscope, label: "Sensors", sub: "DHT22 · MPU-6050 · MQ-135" },
-  { icon: Cpu, label: "Edge Node", sub: "Raspberry Pi" },
-  { icon: Brain, label: "AI + Fusion", sub: "YOLOv8 Nano" },
-  { icon: Database, label: "Local Storage", sub: "SQLite · Offline-first" },
-  { icon: Monitor, label: "Command Center", sub: "TCP · MongoDB Atlas" },
+  { icon: Bot, label: "Rover", sub: "MINEX-01 / Micro Drone" },
+  { icon: Microscope, label: "Sensors", sub: "LiDAR · Thermal · Gas" },
+  { icon: Cpu, label: "Edge Node", sub: "NVIDIA Jetson / RPi 4" },
+  { icon: Brain, label: "AI + Fusion", sub: "YOLOv8 TensorRT" },
+  { icon: Database, label: "Mesh Comms", sub: "Wi-Fi HaLow · Auto-Retrace" },
+  { icon: Monitor, label: "Dashboard", sub: "React · FastAPI · WebRTC" },
 ];
 
 export default function SolutionSection() {
@@ -38,10 +38,10 @@ export default function SolutionSection() {
               </p>
               <div className="space-y-2">
                 {[
-                  "Edge AI inference with YOLOv8 Nano",
-                  "Offline-first SQLite + MongoDB dual storage",
-                  "Multi-threaded fault-tolerant architecture",
-                  "Real-time TCP telemetry streaming",
+                  "Edge AI inference with YOLOv8 TensorRT + Thermal",
+                  "GPS-free 3D SLAM mapping and autonomous navigation",
+                  "Auto-Retrace capability over Wi-Fi HaLow mesh",
+                  "Real-time Dashboard with WebRTC two-way audio",
                 ].map((point) => (
                   <div key={point} className="flex items-center gap-2 text-sm text-gray-900">
                     <Check className="w-4 h-4 text-orange-600 flex-shrink-0" />

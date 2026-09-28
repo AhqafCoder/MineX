@@ -7,10 +7,10 @@ export const metadata = {
 };
 
 const safetyFeatures = [
-  { title: "Human Detection Priority", desc: "AI human detection is the highest-priority safety task. Alerts are broadcast instantly.", icon: "👤" },
-  { title: "Hazardous Gas Monitoring", desc: "MQ-135 continuously monitors air quality and escalates alert severity automatically.", icon: "💨" },
-  { title: "Environmental Thresholds", desc: "Temperature and humidity out-of-range conditions trigger automatic warnings.", icon: "🌡️" },
-  { title: "Emergency Stop", desc: "A single command immediately halts all rover movement safely.", icon: "🛑" },
+  { title: "Thermal & AI Survivor Localization", desc: "Edge AI processing combined with Thermal Imaging detects trapped workers in zero-visibility conditions.", icon: "👤" },
+  { title: "Multi-Level Gas Mapping", desc: "Precision MEMS sensors map hazardous gases (CH4, CO, H2S, O2) in real-time, escalating alerts automatically.", icon: "💨" },
+  { title: "Auto-Retrace Protocol", desc: "If mesh communication is lost, the rover utilizes its SLAM map to safely retrace its path to the last active node.", icon: "🔄" },
+  { title: "DGMS-Compliant Hardware", desc: "Sealed electronics and BLDC motors minimize explosion risks in volatile mining environments.", icon: "🛡️" },
 ];
 
 export default function SafetyPage() {

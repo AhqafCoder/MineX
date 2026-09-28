@@ -22,10 +22,10 @@ export default function CTASection() {
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link
-                href="/contact"
+                href="/dashboard"
                 className="px-8 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-full transition-colors text-sm"
               >
-                Get in Touch
+                Open Dashboard
               </Link>
             </div>
           </div>

@@ -15,12 +15,12 @@ interface SidebarProps {
 
 const navItems = [
   { id: "overview", label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
-  { id: "mission", label: "Mission", icon: Target, href: "/dashboard/mission" },
   { id: "map", label: "Live Map", icon: Map, href: "/dashboard/map" },
   { id: "vision", label: "Vision AI", icon: Camera, href: "/dashboard/vision" },
   { id: "environment", label: "Environment", icon: Activity, href: "/dashboard/environment" },
   { id: "telemetry", label: "Telemetry", icon: Activity, href: "/dashboard/telemetry" },
   { id: "alerts", label: "Alerts", icon: AlertTriangle, href: "/dashboard/alerts" },
+  { id: "mission", label: "Mission", icon: Target, href: "/dashboard/mission" },
   { id: "reports", label: "Reports", icon: FileText, href: "/dashboard/reports" },
 ];
 

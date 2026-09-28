@@ -1,17 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { Thermometer, Compass, Navigation, Camera, Wind, Cpu } from "lucide-react";
+import { Signal, Compass, Navigation, Camera, Wind, Cpu } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import type { LucideIcon } from "lucide-react";
 
 const hardware: { id: string; icon: LucideIcon; name: string; desc: string; featured?: boolean }[] = [
-  { id: "DHT22", icon: Thermometer, name: "Temperature + Humidity", desc: "Environmental monitoring" },
-  { id: "MPU-6050", icon: Compass, name: "Accelerometer / Gyroscope", desc: "Motion and kinematics" },
-  { id: "QMC6310", icon: Navigation, name: "Compass", desc: "Orientation & heading" },
-  { id: "ESP32-CAM", icon: Camera, name: "Camera Feed", desc: "Vision input for AI" },
-  { id: "MQ-135", icon: Wind, name: "Gas / Air Quality", desc: "Hazardous gas detection" },
-  { id: "Raspberry Pi", icon: Cpu, name: "Edge Node", desc: "Local AI processing", featured: true },
+  { id: "LIDAR", icon: Compass, name: "2D SLAM LiDAR", desc: "3D mapping & obstacle detection" },
+  { id: "MPU-9250", icon: Navigation, name: "9-DOF IMU", desc: "Motion tracking & orientation" },
+  { id: "THERMAL", icon: Camera, name: "FLIR & Arducam", desc: "Thermal & night vision AI" },
+  { id: "GAS", icon: Wind, name: "Multi-Gas Sensors", desc: "Hazardous gas detection" },
+  { id: "HALOW", icon: Signal, name: "Wi-Fi HaLow", desc: "Mesh communication" },
+  { id: "JETSON / RPI", icon: Cpu, name: "Edge Node", desc: "Local AI processing", featured: true },
 ];
 
 export default function HardwareSection() {

@@ -6,18 +6,18 @@ export const metadata = {
 };
 
 const features = [
-  { icon: "👁️", title: "AI Human Detection", desc: "YOLOv8 Nano detects humans in real-time with high confidence.", tag: "Primary Safety", theme: "red" },
-  { icon: "📱", title: "Cell Phone Detection", desc: "Secondary detection of cell phones as a rescue assistance signal.", tag: "Rescue Aid", theme: "orange" },
-  { icon: "🌡️", title: "Env Sensors", desc: "Continuous monitoring of temperature, humidity and air quality.", tag: "Safety", theme: "green" },
-  { icon: "📡", title: "LiDAR Perception", desc: "Spatial perception for tunnel mapping and obstacle detection.", tag: "Navigation", theme: "blue" },
-  { icon: "⚡", title: "Live Telemetry", desc: "Live streaming of all sensor data via TCP socket to operators.", tag: "Communication", theme: "purple" },
-  { icon: "🎮", title: "Remote Control", desc: "Manual, assisted and autonomous operation modes.", tag: "Control", theme: "red" },
-  { icon: "💾", title: "Offline Data", desc: "Telemetry is stored locally on SQLite. No data is lost offline.", tag: "Resilience", theme: "orange" },
-  { icon: "🛡️", title: "Fault-Tolerant", desc: "Multi-threaded design ensures individual failures don't cascade.", tag: "Reliability", theme: "green" },
-  { icon: "🔄", title: "Auto-Healing", desc: "Failed sensor threads restart automatically to maintain coverage.", tag: "Resilience", theme: "blue" },
-  { icon: "🎯", title: "Mission Monitor", desc: "Track progress, waypoints, and real-time rover position.", tag: "Operations", theme: "purple" },
-  { icon: "🗄️", title: "Local Storage", desc: "Edge node stores all operational data locally for immediate access.", tag: "Data", theme: "red" },
-  { icon: "☁️", title: "Cloud Sync", desc: "Automatic synchronization to MongoDB Atlas when connected.", tag: "Data", theme: "green" },
+  { icon: "👁️", title: "Edge AI Detection", desc: "YOLOv8 (TensorRT Quantized) with Thermal AI locates trapped workers in zero-visibility.", tag: "Primary Safety", theme: "red" },
+  { icon: "📡", title: "Advanced SLAM", desc: "2D LiDAR & 9-DOF IMU enable GPS-free 3D mapping and autonomous navigation.", tag: "Navigation", theme: "blue" },
+  { icon: "💨", title: "Multi-Level Gas Mapping", desc: "MEMS CH4, CO, H2S, and O2 sensors continuously monitor and map hazardous gases.", tag: "Safety", theme: "green" },
+  { icon: "📶", title: "Wi-Fi HaLow Mesh", desc: "Heltec 802.11ah enables long-range, self-healing subsurface mesh communication.", tag: "Communication", theme: "purple" },
+  { icon: "🔄", title: "Auto Retrace", desc: "Rover automatically returns to the last connected mesh node if communication is lost.", tag: "Resilience", theme: "orange" },
+  { icon: "🚁", title: "Dual Platform Mobility", desc: "Rugged all-terrain tracked rover paired with a deployable micro drone.", tag: "Mobility", theme: "red" },
+  { icon: "🔋", title: "Smart Docking", desc: "Automated docking stations for auto-charging, data transfer, and continuous monitoring.", tag: "Infrastructure", theme: "green" },
+  { icon: "🛡️", title: "DGMS-Compliant", desc: "Safety-focused sealed electronics with BLDC motors designed for explosion risk areas.", tag: "Reliability", theme: "blue" },
+  { icon: "💻", title: "Onboard Compute", desc: "NVIDIA Jetson / Raspberry Pi 4 handles vision, SLAM, and decision engines locally.", tag: "Processing", theme: "purple" },
+  { icon: "🎙️", title: "Two-Way Audio", desc: "WebRTC streaming provides live two-way voice communication for rescue coordination.", tag: "Rescue Aid", theme: "orange" },
+  { icon: "🗺️", title: "Surface Dashboard", desc: "React-based UI for real-time 3D maps, telemetry, and automated hazard alerts.", tag: "Operations", theme: "blue" },
+  { icon: "🎥", title: "Thermal & Night Vision", desc: "FLIR Lepton 3.5 & Arducam NOIR provide clear visuals through dust and smoke.", tag: "Vision", theme: "red" },
 ];
 
 export default function FeaturesPage() {

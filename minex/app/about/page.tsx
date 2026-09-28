@@ -148,7 +148,7 @@ export default function AboutPage() {
                 <DiagramCard
                   theme="red"
                   title="Rapid Survivor Location"
-                  desc="Edge-AI (YOLOv8) actively hunts for humans and cell phones, significantly reducing search times in visually chaotic disaster zones or collapsed structures."
+                  desc="Edge-AI (YOLOv8 TensorRT) and Thermal Imaging actively hunts for trapped workers, significantly reducing search times in zero-visibility environments like collapsed structures."
                   footerText="Faster Rescue Missions"
                   icon={<ScanSearch size={32} />}
                   footerIcon={<Timer size={18} />}
@@ -156,7 +156,7 @@ export default function AboutPage() {
                 <DiagramCard
                   theme="orange"
                   title="Proactive Hazard Prevention"
-                  desc="Continuous, real-time streaming of temperature and hazardous gas levels (MQ-135) keeps first responders and miners out of harm's way until an area is definitively proven safe."
+                  desc="Continuous, real-time 3D mapping of hazardous gas levels (CH4, CO, H2S) keeps first responders out of harm's way until an area is definitively proven safe."
                   footerText="Safer Operations"
                   icon={<ShieldAlert size={32} />}
                   footerIcon={<AlertTriangle size={18} />}
@@ -177,7 +177,7 @@ export default function AboutPage() {
                 <DiagramCard
                   theme="purple"
                   title="Cost-Effective Scalability"
-                  desc="Built on low-cost hardware (Raspberry Pi, ESP32) and open-source frameworks, making it highly affordable to mass-produce and deploy swarms of these rovers in emergency scenarios."
+                  desc="Built on scalable hardware (NVIDIA Jetson, Raspberry Pi) and open-source frameworks, making it highly feasible to mass-produce and deploy rover swarms."
                   footerText="Affordable at Scale"
                   icon={<Coins size={32} />}
                   footerIcon={<BarChart3 size={18} />}
@@ -188,8 +188,8 @@ export default function AboutPage() {
               <div className="flex flex-col gap-10 lg:pr-4">
                 <DiagramCard
                   theme="green"
-                  title="Zero Data Loss Guarantee"
-                  desc="Offline-first, dual-database architecture ensures that critical telemetry is never lost. Even during total network blackouts deep in mining shafts, data is safely preserved on the local node."
+                  title="Subsurface Mesh Communication"
+                  desc="Wi-Fi HaLow (802.11ah) local mesh ensures connectivity even in deep mining shafts. If communication is lost, Auto-Retrace safely guides the rover back."
                   footerText="Reliable & Secure Data"
                   icon={<Database size={32} />}
                   footerIcon={<ShieldCheck size={18} />}
@@ -197,7 +197,7 @@ export default function AboutPage() {
                 <DiagramCard
                   theme="blue"
                   title="Mission-Critical Durability"
-                  desc="A highly resilient, auto-healing multi-threaded system. If a sensor is physically crushed or short-circuits, the software automatically isolates the failure so the rest of the rover continues operating without crashing."
+                  desc="Rugged, DGMS-compliant design with BLDC motors and sealed electronics ensures the rover continues operating safely even in explosion-risk hazard zones."
                   footerText="Continuous Operation"
                   icon={<Settings size={32} />}
                   footerIcon={<RotateCcw size={18} />}
@@ -236,8 +236,8 @@ export default function AboutPage() {
               <div className="border-[4px] border-green-500 rounded-[2rem] p-6 lg:p-8 bg-white shadow-xl flex flex-col gap-1">
                 <FeasibilityItem 
                   theme="green"
-                  title="Low-Cost & Readily Available Hardware"
-                  desc="Built using affordable and widely available hardware (Raspberry Pi, ESP32-CAM, standard sensors), making it cost-effective and easy to deploy at scale."
+                  title="Scalable & Standardized Hardware"
+                  desc="Built using established hardware (NVIDIA Jetson, Raspberry Pi 4, 2D LiDAR), ensuring reliable integration and scalable future deployments."
                   leftIcon={<Cpu size={28} />}
                   rightIcon={<Coins size={20} />}
                   rightLabel="Cost Effective"
@@ -253,7 +253,7 @@ export default function AboutPage() {
                 <FeasibilityItem 
                   theme="green"
                   title="Optimized for Edge Execution"
-                  desc="YOLOv8 runs efficiently on the Raspberry Pi, providing real-time detection of humans and cell phones without the need for high-power GPUs."
+                  desc="YOLOv8 TensorRT Quantized runs efficiently on onboard compute, providing real-time detection of humans without continuous surface connectivity."
                   leftIcon={<ScanFace size={28} />}
                   rightIcon={<Gauge size={20} />}
                   rightLabel="Lightweight & Efficient"
@@ -272,24 +272,24 @@ export default function AboutPage() {
               <div className="border-[4px] border-blue-500 rounded-[2rem] p-6 lg:p-8 bg-white shadow-xl flex flex-col gap-1">
                 <FeasibilityItem 
                   theme="blue"
-                  title="Offline-First Architecture"
-                  desc="Dual-database system (SQLite + MongoDB) ensures zero data loss, even during total network blackouts in underground or disaster-hit areas."
+                  title="Self-Healing Mesh & Auto-Retrace"
+                  desc="Wi-Fi HaLow relay nodes ensure broad coverage. If connection drops, the rover utilizes SLAM to retrace its path to the last active node."
                   leftIcon={<Database size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
                   rightLabel="Zero Data Loss"
                 />
                 <FeasibilityItem 
                   theme="blue"
-                  title="Independent Local Access"
-                  desc="Built-in TCP server allows direct connection from a laptop/control station to monitor real-time data without requiring an active internet connection."
+                  title="Surface Control & Docking"
+                  desc="Real-time dashboard provides 3D mapping and telemetry. Automated docking stations enable charging and two-way voice communication."
                   leftIcon={<Laptop size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
                   rightLabel="Works Offline"
                 />
                 <FeasibilityItem 
                   theme="blue"
-                  title="Fault-Tolerant & Auto-Healing"
-                  desc="Multi-threaded architecture isolates sensor failures, ensuring the rover continues operating even if a sensor is damaged or short-circuits."
+                  title="Hazard-Appropriate Design"
+                  desc="DGMS-compliant sealed electronics and BLDC motors minimize explosion risks, ensuring continuous operation in hazardous environments."
                   leftIcon={<Settings size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
                   rightLabel="Always Running"
