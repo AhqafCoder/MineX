@@ -7,7 +7,7 @@ export default function RoverShowcase() {
     { emoji: "👁️", label: "AI Vision", sub: "YOLOv8 Nano", pos: "top-8 left-0" },
     { emoji: "📡", label: "LiDAR", sub: "Spatial mapping", pos: "top-8 right-0" },
     { emoji: "💻", label: "Edge Node", sub: "Raspberry Pi", pos: "bottom-20 left-0" },
-    { emoji: "🌡️", label: "Env Sensors", sub: "DHT11 · MQ-135", pos: "bottom-20 right-0" },
+    { emoji: "🌡️", label: "Env Sensors", sub: "DHT22 · MQ-135", pos: "bottom-20 right-0" },
   ];
 
   const specs = [

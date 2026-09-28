@@ -16,7 +16,7 @@ export default function RoverExplodedView() {
       {/* Image Container - Using original exact aspect ratio (768x1200) */}
       <div className="relative w-full aspect-[768/1200] flex items-center justify-center">
         <Image 
-          src="/rover-prototype.jpeg" 
+          src="/rover-prototype.png" 
           alt="Rover Exploded View Diagram"
           fill
           className="object-contain transition-transform duration-700 group-hover:scale-[1.02]"

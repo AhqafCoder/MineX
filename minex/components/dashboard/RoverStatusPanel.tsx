@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import { Battery, Wifi, Gauge, Navigation, Map, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -11,71 +9,85 @@ interface Props {
 
 export default function RoverStatusPanel({ state }: Props) {
   const isEmergency = state.roverState === "emergency";
+  const isOffline = state.connection === "offline";
 
   return (
     <div className={cn(
       "bg-white rounded-3xl border shadow-sm overflow-hidden",
-      isEmergency ? "border-gray-100" : "border-gray-100"
+      "border-gray-100"
     )}>
       {/* Header */}
-      <div className={cn(
-        "flex items-center justify-between px-5 py-4 border-b",
-        isEmergency ? "bg-gray-50 border-gray-100" : "border-gray-100 bg-white"
-      )}>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white">
         <h3 className="font-bold text-gray-900">Rover Status</h3>
         <div className="flex items-center gap-2">
           <div className={cn(
             "w-2 h-2 rounded-full",
-            isEmergency ? "bg-red-500 animate-pulse" : "bg-orange-600"
+            isOffline ? "bg-gray-300" : isEmergency ? "bg-red-500 animate-pulse" : "bg-orange-600"
           )} />
           <span className={cn(
             "text-xs font-bold uppercase tracking-wider",
-            isEmergency ? "text-red-600" : "text-orange-600"
+            isOffline ? "text-gray-400" : isEmergency ? "text-red-600" : "text-orange-600"
           )}>
-            {isEmergency ? "E-Stop" : "Online"}
+            {isOffline ? "Offline" : isEmergency ? "E-Stop" : "Online"}
           </span>
         </div>
       </div>
 
       <div className="p-5">
-        {/* Rover image */}
-        <div className="relative h-32 mb-4 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-24 h-24 rounded-full bg-gray-100 blur-2xl" />
+        {/* Orientation & Tilt */}
+        <div className="bg-gray-50 rounded-xl p-3 mb-4 border border-gray-100 flex items-center gap-4">
+          <div className="flex-1 flex flex-col items-center">
+            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-2">Heading</div>
+            <div className="relative w-12 h-12 bg-white rounded-full border shadow-sm flex items-center justify-center">
+              <div className="absolute top-1 text-[8px] font-bold text-gray-400">N</div>
+              <div 
+                className="w-8 h-8 rounded-full border-2 border-orange-500 relative transition-transform duration-300"
+                style={{ transform: `rotate(${isOffline ? 0 : state.heading}deg)` }}
+              >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-orange-600" />
+              </div>
+              <div className="absolute text-[10px] font-bold mt-1 text-gray-700">
+                {isOffline ? "--" : `${state.heading.toFixed(0)}`}&deg;
+              </div>
+            </div>
           </div>
-          <Image
-            src="/minex-rover.png"
-            alt="MINEX-01 Rover"
-            fill
-            className="object-contain p-2 relative z-10"
-          />
-          {isEmergency && (
-            <div className="absolute inset-0 flex items-center justify-center bg-red-500/10 rounded-2xl z-20">
-              <div className="bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-full shadow-sm">
-                <span className="text-xs font-bold text-red-600">STOPPED</span>
+          <div className="w-px h-12 bg-gray-200" />
+          <div className="flex-1 flex flex-col gap-2">
+            <div>
+              <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase mb-1">
+                <span>Pitch</span>
+                <span className={cn(!isOffline && Math.abs(state.pitch) > 15 ? "text-orange-600" : "")}>
+                  {isOffline ? "--" : state.pitch.toFixed(1)}&deg;
+                </span>
+              </div>
+              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center relative">
+                <div className="absolute h-full w-[2px] bg-gray-400 z-10" />
+                {!isOffline && (
+                  <div 
+                    className="h-full bg-blue-500 transition-all duration-300 absolute left-1/2 origin-left"
+                    style={{ width: `${Math.min(50, Math.abs(state.pitch))}%`, transform: state.pitch < 0 ? 'scaleX(-1)' : 'scaleX(1)' }}
+                  />
+                )}
               </div>
             </div>
-          )}
-        </div>
-
-        {/* Metrics grid */}
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          {[
-            { icon: Battery, label: "Battery", value: `${state.battery.toFixed(0)}%`, color: state.battery > 50 ? "text-orange-600" : "text-orange-500", bg: "bg-gray-50" },
-            { icon: Wifi, label: "Signal", value: `${state.signal.toFixed(0)}%`, color: "text-orange-600", bg: "bg-gray-50" },
-            { icon: Gauge, label: "Speed", value: `${state.speed.toFixed(1)} m/s`, color: "text-gray-900", bg: "bg-gray-50" },
-            { icon: Map, label: "Distance", value: `${state.distance.toFixed(0)} m`, color: "text-gray-900", bg: "bg-gray-50" },
-          ].map((metric) => (
-            <div key={metric.label} className={cn("p-3 rounded-xl border border-gray-100", metric.bg)}>
-              <div className="flex items-center gap-1.5 mb-1 text-gray-500">
-                <metric.icon className="w-3 h-3" />
-                <span className="text-xs font-medium">{metric.label}</span>
+            <div>
+              <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase mb-1">
+                <span>Roll</span>
+                <span className={cn(!isOffline && Math.abs(state.roll) > 15 ? "text-orange-600" : "")}>
+                  {isOffline ? "--" : state.roll.toFixed(1)}&deg;
+                </span>
               </div>
-              <div className={cn("text-lg font-bold", metric.color)}>
-                {metric.value}
+              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center relative">
+                <div className="absolute h-full w-[2px] bg-gray-400 z-10" />
+                {!isOffline && (
+                  <div 
+                    className="h-full bg-green-500 transition-all duration-300 absolute left-1/2 origin-left"
+                    style={{ width: `${Math.min(50, Math.abs(state.roll))}%`, transform: state.roll < 0 ? 'scaleX(-1)' : 'scaleX(1)' }}
+                  />
+                )}
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

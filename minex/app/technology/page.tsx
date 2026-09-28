@@ -26,7 +26,7 @@ const techSections = [
     title: "Sensor Fusion",
     subtitle: "Multi-Stream Data Integration",
     desc: "MineX continuously fuses data from five independent sensor streams — motion, orientation, environmental, gas and visual — into a unified situational awareness picture.",
-    specs: ["DHT11", "MPU-6050", "QMC6310", "MQ-135", "ESP32-CAM"],
+    specs: ["DHT22", "MPU-6050", "QMC6310", "MQ-135", "ESP32-CAM"],
   },
   {
     id: "04",

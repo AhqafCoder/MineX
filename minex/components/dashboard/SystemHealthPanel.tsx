@@ -1,7 +1,6 @@
 "use client";
 
 import { Activity } from "lucide-react";
-import { systemHealth } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import type { DashboardState } from "@/app/dashboard/page";
 
@@ -32,11 +31,23 @@ export default function SystemHealthPanel({ state }: Props) {
     }
   };
 
-  const healthItems = Object.entries(systemHealth).map(([key, value]) => ({
-    id: key,
-    name: key.replace(/([A-Z])/g, " $1").trim(),
-    status: value as string,
-  }));
+  const isConnected = state.connection === "connected";
+  const hasImu = state.accelX !== 0 || state.accelY !== 0 || state.accelZ !== 0;
+
+  const healthItems = [
+    { id: "edgeNode", name: "Edge Node", status: isConnected ? "online" : "offline" },
+    { id: "raspberryPi", name: "Raspberry Pi", status: isConnected ? "healthy" : "offline" },
+    { id: "yolov8", name: "YOLOv8", status: isConnected ? "ready" : "offline" },
+    { id: "lidar", name: "LiDAR", status: state.isLive ? "offline" : "online" }, // LiDAR is simulated for now
+    { id: "esp32cam", name: "ESP32-CAM", status: state.isLive && isConnected ? "online" : "offline" },
+    { id: "mpu6050", name: "MPU6050", status: isConnected && hasImu ? "online" : "offline" },
+    { id: "qmc6310", name: "QMC6310", status: isConnected && hasImu ? "online" : "offline" },
+    { id: "dht22", name: "DHT22", status: isConnected ? "online" : "offline" },
+    { id: "mq135", name: "MQ135", status: isConnected && state.gas !== "OFFLINE" ? "online" : "offline" },
+    { id: "sqlite", name: "SQLite", status: isConnected ? "synced" : "local" },
+    { id: "mongodb", name: "MongoDB", status: isConnected ? "connected" : "disconnected" },
+    { id: "tcp", name: "TCP", status: state.connection === "reconnecting" ? "connecting" : isConnected ? "streaming" : "offline" },
+  ];
 
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full">

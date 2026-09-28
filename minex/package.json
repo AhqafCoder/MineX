@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ai": "python3 ai_pose_service.py"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.8",

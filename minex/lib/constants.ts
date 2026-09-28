@@ -4,7 +4,7 @@ export const ROVER_ID = "MINEX-01";
 export const MISSION_ID = "MX-2026-041";
 export const MISSION_NAME = "Tunnel Inspection";
 
-export const ROVER_COMMAND_CENTER_URL = "http://winner.local:8080/";
+export const ROVER_COMMAND_CENTER_URL = "/dashboard";
 
 export const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -12,7 +12,6 @@ export const NAV_LINKS = [
   { label: "Features", href: "/features" },
   { label: "Technology", href: "/technology" },
   { label: "Safety", href: "/safety" },
-  { label: "Command Center", href: ROVER_COMMAND_CENTER_URL },
 ];
 
 export const DASHBOARD_NAV = [
