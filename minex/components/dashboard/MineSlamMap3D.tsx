@@ -162,6 +162,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
   // Camera & Mode Controls
   const [cameraMode, setCameraMode] = useState<"orbit" | "topdown" | "chase" | "fpv">("orbit");
   const [isPatrolling, setIsPatrolling] = useState(true);
+  const [patrolSpeed, setPatrolSpeed] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedHotspot, setSelectedHotspot] = useState<GasHotspot | null>(null);
 
@@ -184,12 +185,14 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
   // on every change (destroying OrbitControls interactivity).
   const cameraModeRef = useRef(cameraMode);
   const isPatrollingRef = useRef(isPatrolling);
+  const patrolSpeedRef = useRef(patrolSpeed);
   const stateRef = useRef(state);
   const slamStatsThrottleRef = useRef(0); // frame counter for throttled stats update
 
   // Keep refs in sync with React state
   useEffect(() => { cameraModeRef.current = cameraMode; }, [cameraMode]);
   useEffect(() => { isPatrollingRef.current = isPatrolling; }, [isPatrolling]);
+  useEffect(() => { patrolSpeedRef.current = patrolSpeed; }, [patrolSpeed]);
   useEffect(() => { stateRef.current = state; }, [state]);
 
   // Scene references
@@ -226,7 +229,8 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
 
     // 2. Camera setup
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
-    camera.position.set(-45, 35, 55);
+    // Default: near-rover top-down-ish view (will snap to rover position on first frame)
+    camera.position.set(-15, 25, 15);
     cameraRef.current = camera;
 
     // 3. Renderer setup
@@ -245,7 +249,8 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     controls.maxPolarAngle = Math.PI / 2 + 0.2; // Allow slight upward angle inside mine
     controls.minDistance = 3;
     controls.maxDistance = 180;
-    controls.target.set(0, -8, 0);
+    // Target near the rover's starting position (Station Alpha at -15, -4, 0)
+    controls.target.set(-15, -4, 0);
     controlsRef.current = controls;
 
     // 5. Lighting
@@ -428,52 +433,76 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     pointCloudRef.current = pointCloud;
     scene.add(pointCloud);
 
-    // 8. 3D Volumetric Gas Heatmap Hotspots
+    // 8. 3D Volumetric Gas Heatmap — Thermal Imaging Style
     const gasGroup = new THREE.Group();
     gasGroupRef.current = gasGroup;
 
+    // Create a radial gradient texture for thermal heatmap look
+    const createHeatmapTexture = (color: THREE.Color) => {
+      const size = 128;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d")!;
+      const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+      const r = Math.round(color.r * 255);
+      const g = Math.round(color.g * 255);
+      const b = Math.round(color.b * 255);
+      gradient.addColorStop(0, `rgba(${r},${g},${b},0.9)`);
+      gradient.addColorStop(0.25, `rgba(${r},${g},${b},0.55)`);
+      gradient.addColorStop(0.5, `rgba(${r},${g},${b},0.25)`);
+      gradient.addColorStop(0.75, `rgba(${r},${g},${b},0.08)`);
+      gradient.addColorStop(1, `rgba(${r},${g},${b},0.0)`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.needsUpdate = true;
+      return tex;
+    };
+
     GAS_HOTSPOTS.forEach((spot) => {
-      // Color based on level
-      const color = spot.level === "critical" ? 0xef4444 : spot.level === "warning" ? 0xf59e0b : 0x10b981;
-      
-      // Outer translucent glow sphere
-      const sphereGeo = new THREE.SphereGeometry(spot.radius * 0.5, 20, 20);
-      const sphereMat = new THREE.MeshBasicMaterial({
+      const color = spot.level === "critical"
+        ? new THREE.Color(0xef4444)
+        : spot.level === "warning"
+          ? new THREE.Color(0xf59e0b)
+          : new THREE.Color(0x10b981);
+
+      const heatTex = createHeatmapTexture(color);
+      const baseOpacity = spot.level === "critical" ? 0.7 : spot.level === "warning" ? 0.5 : 0.35;
+
+      // Multiple stacked flat planes at different Y offsets for volumetric depth
+      const layerCount = 3;
+      for (let l = 0; l < layerCount; l++) {
+        const layerScale = spot.radius * (0.8 + l * 0.3);
+        const planeGeo = new THREE.PlaneGeometry(layerScale, layerScale);
+        const planeMat = new THREE.MeshBasicMaterial({
+          map: heatTex,
+          transparent: true,
+          opacity: baseOpacity * (1 - l * 0.25),
+          side: THREE.DoubleSide,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+        const planeMesh = new THREE.Mesh(planeGeo, planeMat);
+        planeMesh.position.set(spot.x, spot.y + (l - 1) * 0.6, spot.z);
+        // Face upward like a floor heatmap
+        planeMesh.rotation.x = -Math.PI / 2;
+        planeMesh.userData = { isHeatLayer: true, baseOpacity: baseOpacity * (1 - l * 0.25) };
+        gasGroup.add(planeMesh);
+      }
+
+      // Small bright center marker dot
+      const dotGeo = new THREE.SphereGeometry(0.35, 12, 12);
+      const dotMat = new THREE.MeshBasicMaterial({
         color: color,
         transparent: true,
-        opacity: spot.level === "critical" ? 0.35 : 0.2,
-        wireframe: true,
+        opacity: 0.9,
+        blending: THREE.AdditiveBlending,
       });
-      const sphereMesh = new THREE.Mesh(sphereGeo, sphereMat);
-      sphereMesh.position.set(spot.x, spot.y, spot.z);
-      gasGroup.add(sphereMesh);
-
-      // Core pulsing node
-      const coreGeo = new THREE.SphereGeometry(0.8, 16, 16);
-      const coreMat = new THREE.MeshStandardMaterial({
-        color: color,
-        emissive: color,
-        emissiveIntensity: 0.8,
-        roughness: 0.2,
-      });
-      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-      coreMesh.position.set(spot.x, spot.y, spot.z);
-      gasGroup.add(coreMesh);
-
-      // Alert beacon ring for critical/warning
-      if (spot.level !== "safe") {
-        const ringGeo = new THREE.RingGeometry(1.2, 1.4, 32);
-        const ringMat = new THREE.MeshBasicMaterial({
-          color: color,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.8,
-        });
-        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-        ringMesh.position.set(spot.x, spot.y + 0.1, spot.z);
-        ringMesh.rotation.x = Math.PI / 2;
-        gasGroup.add(ringMesh);
-      }
+      const dotMesh = new THREE.Mesh(dotGeo, dotMat);
+      dotMesh.position.set(spot.x, spot.y, spot.z);
+      dotMesh.userData = { isHeatDot: true };
+      gasGroup.add(dotMesh);
     });
 
     scene.add(gasGroup);
@@ -485,9 +514,11 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     // Chassis body
     const bodyGeo = new THREE.BoxGeometry(2.4, 0.8, 1.6);
     const bodyMat = new THREE.MeshStandardMaterial({
-      color: 0xe056fd, // High-visibility tech orange / purple
-      metalness: 0.7,
-      roughness: 0.3,
+      color: 0xffffff, // Pure white for high visibility in dark mine
+      emissive: 0xcccccc, // Self-illuminating so it glows in the dark environment
+      emissiveIntensity: 0.5,
+      metalness: 0.15,
+      roughness: 0.4,
     });
     const bodyMesh = new THREE.Mesh(bodyGeo, bodyMat);
     bodyMesh.position.y = 0.7;
@@ -622,7 +653,7 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
       // Auto-Patrol Rover Animation along 3D Mine Spline
       if (pathCurveRef.current && roverGroupRef.current) {
         if (currentIsPatrolling) {
-          patrolProgressRef.current = (patrolProgressRef.current + 0.0008) % 1;
+          patrolProgressRef.current = (patrolProgressRef.current + 0.0008 * patrolSpeedRef.current) % 1;
         }
 
         const t = patrolProgressRef.current;
@@ -632,6 +663,9 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
 
         roverGroupRef.current.position.copy(currentPos);
         roverGroupRef.current.lookAt(nextPos);
+        // The rover model's front faces +X, but lookAt points -Z toward target.
+        // Rotate -90° around Y to align the chassis forward with travel direction.
+        roverGroupRef.current.rotateY(-Math.PI / 2);
 
         // Apply pitch/roll from live state if available
         if (currentState && (currentState.pitch !== 0 || currentState.roll !== 0)) {
@@ -659,9 +693,16 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
           posAttr.needsUpdate = true;
         }
 
-        // Camera Follow Modes — only override when NOT in free orbit mode
-        if (camera && controls && currentCameraMode !== "orbit") {
-          if (currentCameraMode === "chase") {
+        // Camera Follow Modes — only lock/follow when patrolling (resumed).
+        // When paused, all modes become free — no view locking occurs.
+        if (camera && controls && currentIsPatrolling) {
+          if (currentCameraMode === "orbit") {
+            // Free 3D: soft follow from a top-down-ish offset relative to rover
+            const orbitOffset = new THREE.Vector3(0, 20, 15);
+            const camTargetPos = currentPos.clone().add(orbitOffset);
+            camera.position.lerp(camTargetPos, 0.03);
+            controls.target.lerp(currentPos, 0.05);
+          } else if (currentCameraMode === "chase") {
             const chaseOffset = tangent.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
             const camTargetPos = currentPos.clone().add(chaseOffset);
             camera.position.lerp(camTargetPos, 0.05);
@@ -706,12 +747,16 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
         }
       }
 
-      // Pulse gas nodes
+      // Animate heatmap layers — thermal shimmer effect
       if (gasGroupRef.current) {
         gasGroupRef.current.children.forEach((child, i) => {
-          if (child instanceof THREE.Mesh && child.geometry instanceof THREE.SphereGeometry && child.material.wireframe) {
-            const scale = 1 + Math.sin(time * 2 + i) * 0.08;
-            child.scale.set(scale, scale, scale);
+          if (child instanceof THREE.Mesh && child.userData.isHeatLayer) {
+            const shimmer = 1 + Math.sin(time * 2.5 + i * 0.7) * 0.15;
+            (child.material as THREE.MeshBasicMaterial).opacity = child.userData.baseOpacity * shimmer;
+          }
+          if (child instanceof THREE.Mesh && child.userData.isHeatDot) {
+            const pulse = 0.7 + Math.sin(time * 3 + i) * 0.3;
+            (child.material as THREE.MeshBasicMaterial).opacity = pulse;
           }
         });
       }
@@ -747,21 +792,26 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
     setCameraMode(mode);
     // cameraModeRef is synced via the useEffect above
 
-    if (!cameraRef.current || !controlsRef.current) return;
+    if (!cameraRef.current || !controlsRef.current || !roverGroupRef.current) return;
+
+    // Snap the camera to the rover's current position for the chosen mode
+    const roverPos = roverGroupRef.current.position;
 
     if (mode === "orbit") {
-      cameraRef.current.position.set(-45, 35, 55);
-      controlsRef.current.target.set(0, -8, 0);
+      // Near-rover top-down-ish view
+      cameraRef.current.position.set(roverPos.x, roverPos.y + 20, roverPos.z + 15);
+      controlsRef.current.target.set(roverPos.x, roverPos.y, roverPos.z);
       controlsRef.current.update();
     } else if (mode === "topdown") {
-      cameraRef.current.position.set(0, 75, 0);
-      controlsRef.current.target.set(0, -8, 0);
+      cameraRef.current.position.set(roverPos.x, roverPos.y + 40, roverPos.z);
+      controlsRef.current.target.set(roverPos.x, roverPos.y, roverPos.z);
       controlsRef.current.update();
     }
     // "chase" and "fpv" are driven by the animation loop via cameraModeRef
   }, []);
 
   const resetCamera = useCallback(() => {
+    // Reset to near-rover top-down-ish view
     setCameraPreset("orbit");
   }, [setCameraPreset]);
 
@@ -858,6 +908,25 @@ export default function MineSlamMap3D({ state, heightClass = "h-[560px]" }: Prop
           >
             {isPatrolling ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </button>
+
+          {/* Speed Controls */}
+          <div className="flex items-center bg-gray-900/80 backdrop-blur-md rounded-xl border border-gray-800 shadow-lg overflow-hidden">
+            {[0.5, 1, 2].map((speed) => (
+              <button
+                key={speed}
+                onClick={() => setPatrolSpeed(speed)}
+                className={cn(
+                  "px-2.5 py-1.5 text-[11px] font-bold transition-all",
+                  patrolSpeed === speed
+                    ? "bg-orange-600 text-white shadow-sm"
+                    : "text-gray-400 hover:text-white"
+                )}
+                title={`Set speed to ${speed}x`}
+              >
+                {speed}x
+              </button>
+            ))}
+          </div>
 
           <button
             onClick={resetCamera}
