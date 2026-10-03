@@ -1,17 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { Thermometer, Compass, Navigation, Camera, Wind, Cpu } from "lucide-react";
+import { Thermometer, Compass, Radar, Camera, Wind, Cpu, Flame, Radio, Activity, Cog } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import type { LucideIcon } from "lucide-react";
 
 const hardware: { id: string; icon: LucideIcon; name: string; desc: string; featured?: boolean }[] = [
-  { id: "DHT22", icon: Thermometer, name: "Temperature + Humidity", desc: "Environmental monitoring" },
-  { id: "MPU-6050", icon: Compass, name: "Accelerometer / Gyroscope", desc: "Motion and kinematics" },
-  { id: "QMC6310", icon: Navigation, name: "Compass", desc: "Orientation & heading" },
-  { id: "ESP32-CAM", icon: Camera, name: "Camera Feed", desc: "Vision input for AI" },
-  { id: "MQ-135", icon: Wind, name: "Gas / Air Quality", desc: "Hazardous gas detection" },
-  { id: "Raspberry Pi", icon: Cpu, name: "Edge Node", desc: "Local AI processing", featured: true },
+  { id: "2D RPI LiDAR", icon: Radar, name: "LiDAR Perception", desc: "3D mapping & obstacle detection" },
+  { id: "MPU-9250 (9-DOF)", icon: Compass, name: "IMU + Magnetometer", desc: "Motion tracking & orientation" },
+  { id: "MEMS Gas Sensors", icon: Wind, name: "CH₄ · CO · H₂S · O₃", desc: "Multi-gas hazard monitoring" },
+  { id: "FLIR Lepton 3.5", icon: Flame, name: "Thermal Camera", desc: "Heatmap survivor detection" },
+  { id: "Arducam 8MP NOIR", icon: Camera, name: "Night Vision Camera", desc: "Low-light visual feed" },
+  { id: "Wi-Fi HaLow", icon: Radio, name: "802.11ah Mesh Comms", desc: "Long-range underground network" },
+  { id: "BLDC Motors", icon: Cog, name: "Tank Chassis Drive", desc: "Rugged all-terrain mobility" },
+  { id: "Jetson / RPi 4", icon: Cpu, name: "Edge AI Processor", desc: "Onboard vision, SLAM & decisions", featured: true },
 ];
 
 export default function HardwareSection() {
@@ -23,15 +25,15 @@ export default function HardwareSection() {
             <div className="inline-block px-4 py-1.5 bg-gray-50 text-orange-600 text-sm font-semibold rounded-full mb-4">
               Hardware
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">Hardware Intelligence</h2>
-            <p className="text-gray-500">Low-Cost Hardware. High-Impact Intelligence.</p>
+            <h2 className="text-4xl font-bold text-gray-900 mb-2">Purpose-Built Hardware</h2>
+            <p className="text-gray-500">Ruggedized, modular components selected for underground mine environments.</p>
           </div>
         </ScrollReveal>
 
         <div className="grid md:grid-cols-3 gap-6 items-center">
           {/* Left sensors */}
           <div className="space-y-3">
-            {hardware.slice(0, 3).map((hw, i) => (
+            {hardware.slice(0, 4).map((hw, i) => (
               <ScrollReveal key={hw.id} direction="left" delay={i * 0.1}>
                 <div className="rounded-2xl border p-4 bg-gray-50 border-gray-100 hover:shadow-sm transition-shadow">
                   <div className="flex items-center gap-3">
@@ -66,7 +68,7 @@ export default function HardwareSection() {
 
           {/* Right sensors */}
           <div className="space-y-3">
-            {hardware.slice(3).map((hw, i) => (
+            {hardware.slice(4).map((hw, i) => (
               <ScrollReveal key={hw.id} direction="right" delay={i * 0.1}>
                 <div className={`rounded-2xl border p-4 bg-gray-50 border-gray-100 ${hw.featured ? "ring-2 ring-orange-300" : ""} hover:shadow-sm transition-shadow`}>
                   <div className="flex items-center gap-3">

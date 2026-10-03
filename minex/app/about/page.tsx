@@ -9,7 +9,8 @@ import {
   Settings, RotateCcw,
   Coins, BarChart3,
   Cpu, Code2, ScanFace, TrendingUp, 
-  Laptop, CheckCircle2, Gauge, Cuboid
+  Laptop, CheckCircle2, Gauge, Cuboid,
+  Radar, Radio, Flame
 } from "lucide-react";
 
 export const metadata = {
@@ -103,14 +104,16 @@ export default function AboutPage() {
         <section className="py-20 px-6">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-block px-4 py-1.5 bg-gray-50 text-orange-600 text-sm font-semibold rounded-full mb-4">
-              About Us
+              About MineX
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Making hazardous environments safer for everyone.
+              Autonomous reconnaissance for underground mine safety.
             </h1>
             <p className="text-lg text-gray-500 mb-12">
-              We believe that no human should have to risk their life in unstable mines 
-              or disaster zones when smart, affordable robotics can do the scouting for them.
+              MineX is an AI-powered autonomous rover designed to perform remote reconnaissance in 
+              GPS-denied underground mine environments — detecting trapped workers, mapping tunnel 
+              structures, and monitoring atmospheric hazards so that rescue teams can operate with 
+              full situational awareness.
             </p>
           </div>
         </section>
@@ -121,14 +124,20 @@ export default function AboutPage() {
               <div className="text-3xl mb-4">🎯</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">Our Mission</h2>
               <p className="text-gray-500 leading-relaxed">
-                To build intelligent robotic systems that go where humans cannot — gathering critical data, locating survivors, and monitoring hazards so that first responders can make better decisions with less risk.
+                To reduce responder exposure to hazardous underground environments by enabling 
+                autonomous reconnaissance before human entry. MineX combines thermal AI, LiDAR 
+                SLAM, and multi-gas monitoring to provide real-time situational awareness that 
+                saves lives and accelerates rescue operations.
               </p>
             </div>
             <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
               <div className="text-3xl mb-4">🌍</div>
               <h2 className="text-2xl font-bold text-gray-900 mb-3">Our Vision</h2>
               <p className="text-gray-500 leading-relaxed">
-                A future where autonomous rover fleets operate continuously in hazardous environments — building real-time maps, monitoring conditions, and alerting operators instantly when something changes.
+                A future where autonomous rover fleets with Wi-Fi HaLow mesh communication 
+                continuously monitor underground mines — building real-time 3D hazard maps, 
+                detecting atmospheric threats, and alerting operators instantly. Applicable 
+                across coal, metal, and mineral mining sectors nationwide.
               </p>
             </div>
           </div>
@@ -139,7 +148,7 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">The MineX Rover Capabilities</h2>
-              <p className="text-gray-500">An overview of our autonomous architecture</p>
+              <p className="text-gray-500">Core capabilities of the autonomous architecture</p>
             </div>
             
             <div className="grid lg:grid-cols-3 gap-x-8 gap-y-12 items-center">
@@ -147,17 +156,17 @@ export default function AboutPage() {
               <div className="flex flex-col gap-10 lg:pl-4">
                 <DiagramCard
                   theme="red"
-                  title="Rapid Survivor Location"
-                  desc="Edge-AI (YOLOv8) actively hunts for humans and cell phones, significantly reducing search times in visually chaotic disaster zones or collapsed structures."
+                  title="Thermal + AI Survivor Detection"
+                  desc="FLIR Lepton 3.5 thermal camera combined with YOLOv8 (TensorRT) actively detects human heat signatures through smoke, dust, and darkness — significantly reducing search time in disaster zones."
                   footerText="Faster Rescue Missions"
-                  icon={<ScanSearch size={32} />}
+                  icon={<Flame size={32} />}
                   footerIcon={<Timer size={18} />}
                 />
                 <DiagramCard
                   theme="orange"
-                  title="Proactive Hazard Prevention"
-                  desc="Continuous, real-time streaming of temperature and hazardous gas levels (MQ-135) keeps first responders and miners out of harm's way until an area is definitively proven safe."
-                  footerText="Safer Operations"
+                  title="Multi-Gas Hazard Monitoring"
+                  desc="Industrial MEMS sensors continuously monitor CH₄, CO, H₂S, and O₃ levels with automated hazard zone classification. Gas data is mapped onto the 3D SLAM model for visual hazard overlays."
+                  footerText="Proactive Safety"
                   icon={<ShieldAlert size={32} />}
                   footerIcon={<AlertTriangle size={18} />}
                 />
@@ -176,9 +185,9 @@ export default function AboutPage() {
                 
                 <DiagramCard
                   theme="purple"
-                  title="Cost-Effective Scalability"
-                  desc="Built on low-cost hardware (Raspberry Pi, ESP32) and open-source frameworks, making it highly affordable to mass-produce and deploy swarms of these rovers in emergency scenarios."
-                  footerText="Affordable at Scale"
+                  title="Modular & Scalable Design"
+                  desc="Built on modular, replaceable components — enabling field-level repairs, easy replication, and fleet deployment. Supports additional rovers, relay nodes, and sensor payloads for large-scale operations."
+                  footerText="Fleet-Ready Platform"
                   icon={<Coins size={32} />}
                   footerIcon={<BarChart3 size={18} />}
                   className="w-full lg:w-11/12"
@@ -188,17 +197,17 @@ export default function AboutPage() {
               <div className="flex flex-col gap-10 lg:pr-4">
                 <DiagramCard
                   theme="green"
-                  title="Zero Data Loss Guarantee"
-                  desc="Offline-first, dual-database architecture ensures that critical telemetry is never lost. Even during total network blackouts deep in mining shafts, data is safely preserved on the local node."
-                  footerText="Reliable & Secure Data"
-                  icon={<Database size={32} />}
+                  title="GPS-Free 3D SLAM Mapping"
+                  desc="LiDAR + MPU-9250 IMU feed into a Pose Graph SLAM pipeline via ROS2 Nav2, building real-time 3D maps of multi-level tunnel structures — enabling autonomous navigation without GPS."
+                  footerText="Underground Navigation"
+                  icon={<Radar size={32} />}
                   footerIcon={<ShieldCheck size={18} />}
                 />
                 <DiagramCard
                   theme="blue"
-                  title="Mission-Critical Durability"
-                  desc="A highly resilient, auto-healing multi-threaded system. If a sensor is physically crushed or short-circuits, the software automatically isolates the failure so the rest of the rover continues operating without crashing."
-                  footerText="Continuous Operation"
+                  title="Auto-Retrace & Smart Docking"
+                  desc="When communication is lost, the rover autonomously retraces its SLAM path to the last mesh node. Smart docking stations enable autonomous recharging, data transfer, and continuous monitoring."
+                  footerText="Mission Resilience"
                   icon={<Settings size={32} />}
                   footerIcon={<RotateCcw size={18} />}
                 />
@@ -216,14 +225,14 @@ export default function AboutPage() {
                 Architecture
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Technical Approach</h2>
-              <p className="text-gray-500">A comprehensive overview of our hardware integration, software architecture, and AI pipeline.</p>
+              <p className="text-gray-500">A comprehensive overview of hardware integration, software architecture, and AI pipeline.</p>
             </div>
             
             <TechnicalApproach />
           </div>
         </section>
 
-        {/* FEASIBILITY AND VIABILITY DIAGRAM */}
+        {/* FEASIBILITY AND VIABILITY */}
         <section className="py-24 px-6 bg-gray-50 overflow-hidden relative">
           <div className="max-w-7xl mx-auto pb-40">
             <h2 className="text-4xl md:text-5xl font-serif font-bold text-center text-gray-900 mb-16 tracking-wide uppercase">
@@ -232,75 +241,75 @@ export default function AboutPage() {
             
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 relative z-10">
               
-              {/* Left Column (Green) */}
+              {/* Left Column — Technical Feasibility (Green) */}
               <div className="border-[4px] border-green-500 rounded-[2rem] p-6 lg:p-8 bg-white shadow-xl flex flex-col gap-1">
                 <FeasibilityItem 
                   theme="green"
-                  title="Low-Cost & Readily Available Hardware"
-                  desc="Built using affordable and widely available hardware (Raspberry Pi, ESP32-CAM, standard sensors), making it cost-effective and easy to deploy at scale."
+                  title="Ruggedized All-Terrain Mobility"
+                  desc="BLDC motors with tank chassis support movement across uneven terrain, mud, dust, and debris. Replaceable modules simplify field-level maintenance and repairs."
                   leftIcon={<Cpu size={28} />}
+                  rightIcon={<CheckCircle2 size={20} />}
+                  rightLabel="Field Ready"
+                />
+                <FeasibilityItem 
+                  theme="green"
+                  title="Established Sensor & Embedded Hardware"
+                  desc="Built on proven components (Jetson, LiDAR, FLIR, MEMS sensors) with modular architecture for subsystem development, testing, and replacement."
+                  leftIcon={<Radar size={28} />}
                   rightIcon={<Coins size={20} />}
-                  rightLabel="Cost Effective"
+                  rightLabel="Proven Tech"
                 />
                 <FeasibilityItem 
                   theme="green"
-                  title="Open-Source Ecosystem"
-                  desc="Relies entirely on robust open-source frameworks (Python, OpenCV, Ultralytics YOLOv8), eliminating expensive licensing fees and enabling community support."
-                  leftIcon={<Code2 size={28} />}
-                  rightIcon={<Code2 size={20} />}
-                  rightLabel="No Licensing Fees"
-                />
-                <FeasibilityItem 
-                  theme="green"
-                  title="Optimized for Edge Execution"
-                  desc="YOLOv8 runs efficiently on the Raspberry Pi, providing real-time detection of humans and cell phones without the need for high-power GPUs."
+                  title="Edge Processing Reduces Connectivity Dependency"
+                  desc="All critical AI inference, SLAM, and decision-making runs on the edge — reducing dependence on continuous surface connectivity."
                   leftIcon={<ScanFace size={28} />}
                   rightIcon={<Gauge size={20} />}
-                  rightLabel="Lightweight & Efficient"
+                  rightLabel="Low Latency"
                 />
                 <FeasibilityItem 
                   theme="green"
-                  title="Scalable & Deployable"
-                  desc="Modular design allows easy replication and mass deployment, enabling multiple rovers to work together in large disaster or mining areas."
-                  leftIcon={<TrendingUp size={28} />}
+                  title="Thermal + Visual Multi-Modal Sensing"
+                  desc="Thermal and night vision cameras support reconnaissance in low-visibility conditions. LiDAR + IMU + SLAM enable mapping in GPS-denied environments."
+                  leftIcon={<Flame size={28} />}
                   rightIcon={<Cuboid size={20} />}
-                  rightLabel="Scalable Solution"
+                  rightLabel="Multi-Modal"
                 />
               </div>
 
-              {/* Right Column (Blue) */}
+              {/* Right Column — Operational Viability (Blue) */}
               <div className="border-[4px] border-blue-500 rounded-[2rem] p-6 lg:p-8 bg-white shadow-xl flex flex-col gap-1">
                 <FeasibilityItem 
                   theme="blue"
-                  title="Offline-First Architecture"
-                  desc="Dual-database system (SQLite + MongoDB) ensures zero data loss, even during total network blackouts in underground or disaster-hit areas."
-                  leftIcon={<Database size={28} />}
+                  title="Auto-Retrace & SLAM Fallback"
+                  desc="Manual control and SLAM-based retrace provide fallback during system failures. If comms are lost, the rover safely returns to the last relay node."
+                  leftIcon={<RotateCcw size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
-                  rightLabel="Zero Data Loss"
+                  rightLabel="Safe Return"
                 />
                 <FeasibilityItem 
                   theme="blue"
-                  title="Independent Local Access"
-                  desc="Built-in TCP server allows direct connection from a laptop/control station to monitor real-time data without requiring an active internet connection."
-                  leftIcon={<Laptop size={28} />}
+                  title="Scalable Mesh Communication"
+                  desc="Wi-Fi HaLow relay nodes and docking stations enable expandable communication coverage. Additional rovers and sensor payloads can scale future deployments."
+                  leftIcon={<Radio size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
-                  rightLabel="Works Offline"
+                  rightLabel="Expandable"
                 />
                 <FeasibilityItem 
                   theme="blue"
                   title="Fault-Tolerant & Auto-Healing"
-                  desc="Multi-threaded architecture isolates sensor failures, ensuring the rover continues operating even if a sensor is damaged or short-circuits."
+                  desc="Multi-threaded architecture isolates subsystem failures, ensuring the rover continues operating even if individual sensors are damaged."
                   leftIcon={<Settings size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
                   rightLabel="Always Running"
                 />
                 <FeasibilityItem 
                   theme="blue"
-                  title="Mission-Ready for Real-World Use"
-                  desc="Rugged, modular and resilient design built for harsh environments like collapsed structures and mining shafts."
+                  title="Deployment-Ready for Multiple Sectors"
+                  desc="Applicable to government/PSU mining, private mining operations, and can be configured for coal, metal, and mineral mining conditions."
                   leftIcon={<ShieldCheck size={28} />}
                   rightIcon={<CheckCircle2 size={20} />}
-                  rightLabel="Reliable & Robust"
+                  rightLabel="Multi-Sector"
                 />
               </div>
             </div>

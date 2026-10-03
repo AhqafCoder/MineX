@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Bot, Radio, ShieldCheck, Microscope } from "lucide-react";
+import { Bot, Radio, ShieldCheck, Radar, Flame, Map } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -14,10 +14,10 @@ export default function HeroSection() {
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
 
   const stats = [
-    { icon: Bot, label: "AI Human Detection", sub: "Real-Time" },
-    { icon: Radio, label: "Offline-First", sub: "Architecture" },
-    { icon: ShieldCheck, label: "Fault-Tolerant", sub: "System" },
-    { icon: Microscope, label: "Multi-Sensor", sub: "Perception" },
+    { icon: Bot, label: "AI Survivor Detection", sub: "Thermal + Vision" },
+    { icon: Map, label: "GPS-Free 3D SLAM", sub: "LiDAR + IMU Mapping" },
+    { icon: Radio, label: "Wi-Fi HaLow Mesh", sub: "Underground Comms" },
+    { icon: ShieldCheck, label: "Fault-Tolerant", sub: "Auto-Healing System" },
   ];
 
   return (
@@ -42,9 +42,10 @@ export default function HeroSection() {
 
           <ScrollReveal direction="up" delay={0.2}>
             <p className="text-gray-500 text-lg leading-relaxed mb-8 max-w-md">
-              An edge-intelligent mining and disaster-response rover designed to
-              detect humans, monitor hazardous environments and operate reliably
-              even when connectivity fails.
+              An autonomous, AI-powered rover with thermal imaging, LiDAR-based
+              3D SLAM, and Wi-Fi HaLow mesh communication — built to navigate
+              GPS-denied underground mines, detect trapped workers, and map
+              hazardous environments in real time.
             </p>
           </ScrollReveal>
 
@@ -104,8 +105,13 @@ export default function HeroSection() {
             </div>
           </ScrollReveal>
           <ScrollReveal direction="left" delay={0.6}>
-            <div className="absolute bottom-12 left-4 bg-gray-50 border border-gray-100 rounded-xl shadow-md px-3 py-2 text-sm font-semibold text-red-600 flex items-center gap-2">
-              <Bot className="w-3.5 h-3.5" /> Human Detection 94%
+            <div className="absolute bottom-16 left-4 bg-gray-50 border border-gray-100 rounded-xl shadow-md px-3 py-2 text-sm font-semibold text-red-600 flex items-center gap-2">
+              <Flame className="w-3.5 h-3.5" /> Thermal Detection Active
+            </div>
+          </ScrollReveal>
+          <ScrollReveal direction="right" delay={0.7}>
+            <div className="absolute bottom-4 right-8 bg-gray-50 border border-gray-100 rounded-xl shadow-md px-3 py-2 text-sm font-semibold text-blue-600 flex items-center gap-2">
+              <Radar className="w-3.5 h-3.5" /> LiDAR Mapping
             </div>
           </ScrollReveal>
         </motion.div>

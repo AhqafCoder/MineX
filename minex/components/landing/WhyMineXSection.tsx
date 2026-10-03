@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, ShieldCheck, Database, Settings, TrendingUp } from "lucide-react";
+import { Search, ShieldCheck, Database, Settings, TrendingUp, Radar, Radio } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import type { LucideIcon } from "lucide-react";
 
@@ -15,48 +15,57 @@ const features: {
 }[] = [
   {
     icon: Search,
-    title: "Rapid Survivor Location",
+    title: "Thermal + AI Survivor Detection",
     highlight: "Faster Rescue",
     highlightColor: "bg-gray-100 text-red-600",
-    desc: "Edge-AI powered human detection actively searches for humans and cell phones, reducing search time in disaster zones.",
-    stat: "94%",
-    statLabel: "Detection Confidence",
+    desc: "FLIR Lepton 3.5 thermal camera combined with YOLOv8 (TensorRT) detects trapped workers through heat signatures — even in smoke, dust, and total darkness.",
+    stat: "2×",
+    statLabel: "Detection Modes (Thermal + Visual)",
+  },
+  {
+    icon: Radar,
+    title: "GPS-Free 3D SLAM Mapping",
+    highlight: "Autonomous Navigation",
+    highlightColor: "bg-gray-100 text-blue-600",
+    desc: "2D RPI LiDAR and MPU-9250 IMU feed into a Pose Graph SLAM pipeline via ROS2 Nav2, enabling real-time 3D tunnel mapping without GPS.",
+    stat: "3D",
+    statLabel: "Multi-Level Mapping",
+  },
+  {
+    icon: Radio,
+    title: "Wi-Fi HaLow Underground Mesh",
+    highlight: "Always Connected",
+    highlightColor: "bg-gray-100 text-purple-600",
+    desc: "IEEE 802.11ah Wi-Fi HaLow creates a self-healing mesh network with relay nodes for long-range, low-power underground communication.",
+    stat: "1km+",
+    statLabel: "Underground Range",
   },
   {
     icon: ShieldCheck,
-    title: "Proactive Hazard Prevention",
-    highlight: "Safer Operations",
+    title: "Multi-Gas Hazard Monitoring",
+    highlight: "Continuous Safety",
     highlightColor: "bg-gray-100 text-orange-600",
-    desc: "Continuous real-time monitoring of temperature, humidity and hazardous gas levels keeps responders safe.",
-    stat: "5+",
-    statLabel: "Live Sensor Streams",
-  },
-  {
-    icon: Database,
-    title: "Zero Data Loss",
-    highlight: "Reliable Data",
-    highlightColor: "bg-gray-100 text-orange-600",
-    desc: "Offline-first, dual-database architecture ensures critical telemetry is never lost even in network blackouts.",
-    stat: "0%",
-    statLabel: "Data Loss Rate",
+    desc: "Industrial-grade MEMS sensors continuously monitor CH₄, CO, H₂S, and O₃ levels, classifying hazard zones and triggering real-time alerts.",
+    stat: "4",
+    statLabel: "Gas Types Monitored",
   },
   {
     icon: Settings,
-    title: "Mission-Critical Durability",
-    highlight: "Always Running",
+    title: "Auto-Retrace & Smart Docking",
+    highlight: "Mission Resilience",
     highlightColor: "bg-gray-100 text-orange-600",
-    desc: "Multi-threaded architecture isolates sensor failures so the rest of the rover continues operating.",
-    stat: "5",
-    statLabel: "Independent Threads",
+    desc: "When communication is lost, the rover autonomously retraces its path back to the last mesh node. Smart docking enables auto-charging and data transfer.",
+    stat: "100%",
+    statLabel: "Safe Return Rate",
   },
   {
     icon: TrendingUp,
-    title: "Cost-Effective Scalability",
-    highlight: "Affordable",
-    highlightColor: "bg-gray-100 text-orange-600",
-    desc: "Built on Raspberry Pi and ESP32 — affordable hardware with open-source software for large-scale deployment.",
-    stat: "4×",
-    statLabel: "Fleet Ready",
+    title: "Dual Platform Mobility",
+    highlight: "Rover + Drone",
+    highlightColor: "bg-gray-100 text-green-600",
+    desc: "All-terrain tank chassis with BLDC motors navigates rough terrain, while a deployable micro drone extends reach into areas the rover can't access.",
+    stat: "2",
+    statLabel: "Mobility Platforms",
   },
 ];
 
@@ -69,7 +78,7 @@ export default function WhyMineXSection() {
             <div className="inline-block px-4 py-1.5 bg-gray-50 text-orange-600 text-sm font-semibold rounded-full mb-4">
               Why MineX
             </div>
-            <h2 className="text-4xl font-bold text-gray-900">What makes it special?</h2>
+            <h2 className="text-4xl font-bold text-gray-900">Innovation & Key Features</h2>
           </div>
         </ScrollReveal>
 

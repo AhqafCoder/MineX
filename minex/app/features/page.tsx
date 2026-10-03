@@ -6,18 +6,18 @@ export const metadata = {
 };
 
 const features = [
-  { icon: "👁️", title: "AI Human Detection", desc: "YOLOv8 Nano detects humans in real-time with high confidence.", tag: "Primary Safety", theme: "red" },
-  { icon: "📱", title: "Cell Phone Detection", desc: "Secondary detection of cell phones as a rescue assistance signal.", tag: "Rescue Aid", theme: "orange" },
-  { icon: "🌡️", title: "Env Sensors", desc: "Continuous monitoring of temperature, humidity and air quality.", tag: "Safety", theme: "green" },
-  { icon: "📡", title: "LiDAR Perception", desc: "Spatial perception for tunnel mapping and obstacle detection.", tag: "Navigation", theme: "blue" },
-  { icon: "⚡", title: "Live Telemetry", desc: "Live streaming of all sensor data via TCP socket to operators.", tag: "Communication", theme: "purple" },
-  { icon: "🎮", title: "Remote Control", desc: "Manual, assisted and autonomous operation modes.", tag: "Control", theme: "red" },
-  { icon: "💾", title: "Offline Data", desc: "Telemetry is stored locally on SQLite. No data is lost offline.", tag: "Resilience", theme: "orange" },
-  { icon: "🛡️", title: "Fault-Tolerant", desc: "Multi-threaded design ensures individual failures don't cascade.", tag: "Reliability", theme: "green" },
-  { icon: "🔄", title: "Auto-Healing", desc: "Failed sensor threads restart automatically to maintain coverage.", tag: "Resilience", theme: "blue" },
-  { icon: "🎯", title: "Mission Monitor", desc: "Track progress, waypoints, and real-time rover position.", tag: "Operations", theme: "purple" },
-  { icon: "🗄️", title: "Local Storage", desc: "Edge node stores all operational data locally for immediate access.", tag: "Data", theme: "red" },
-  { icon: "☁️", title: "Cloud Sync", desc: "Automatic synchronization to MongoDB Atlas when connected.", tag: "Data", theme: "green" },
+  { icon: "🔥", title: "Thermal Survivor Detection", desc: "FLIR Lepton 3.5 thermal camera detects human heat signatures through smoke, dust, and darkness — even when visual detection fails.", tag: "Primary Safety", theme: "red" },
+  { icon: "🤖", title: "AI Object Detection", desc: "YOLOv8 with TensorRT quantization runs on-device for real-time detection of humans and objects at the edge.", tag: "Edge AI", theme: "orange" },
+  { icon: "🌙", title: "Night Vision", desc: "Arducam 8MP NOIR camera provides clear visual feed in low-light and zero-visibility underground environments.", tag: "Vision", theme: "purple" },
+  { icon: "📡", title: "LiDAR 3D SLAM", desc: "2D RPI LiDAR combined with Pose Graph SLAM creates real-time 3D maps of multi-level tunnel structures — without GPS.", tag: "Navigation", theme: "blue" },
+  { icon: "💨", title: "Multi-Gas Monitoring", desc: "Industrial-grade MEMS sensors detect CH₄, CO, H₂S, and O₃ continuously, with automated hazard classification and alert escalation.", tag: "Safety", theme: "red" },
+  { icon: "📶", title: "Wi-Fi HaLow Mesh", desc: "IEEE 802.11ah mesh protocol with relay nodes enables long-range, low-power underground communication with self-healing capability.", tag: "Communication", theme: "green" },
+  { icon: "🗣️", title: "Two-Way Voice (WebRTC)", desc: "Real-time voice communication between surface operators and subsurface via WebRTC, even through the mesh network.", tag: "Communication", theme: "blue" },
+  { icon: "🔄", title: "Auto-Retrace", desc: "When communication is lost, the rover autonomously retraces its SLAM path back to the last known mesh relay node.", tag: "Resilience", theme: "orange" },
+  { icon: "🔋", title: "Smart Docking", desc: "Auto-docking station for autonomous recharging, data transfer, and continuous monitoring without manual intervention.", tag: "Autonomy", theme: "green" },
+  { icon: "🚁", title: "Micro Drone Deployment", desc: "Deployable micro drone extends reach into narrow passages and vertical shafts that the rover chassis cannot access.", tag: "Dual Platform", theme: "purple" },
+  { icon: "🛡️", title: "Fault-Tolerant Architecture", desc: "Multi-threaded design with independent subsystem supervision — individual failures are isolated and auto-restarted.", tag: "Reliability", theme: "green" },
+  { icon: "🗺️", title: "Multi-Level Gas Mapping", desc: "Gas concentration data is mapped onto the 3D SLAM model, creating visual hazard zone overlays for rescue planning.", tag: "Mapping", theme: "red" },
 ];
 
 export default function FeaturesPage() {
@@ -35,19 +35,18 @@ export default function FeaturesPage() {
               Everything you need in one smart rover.
             </h1>
             <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-              Designed for real underground scenarios where reliability, safety, and data integrity matter most. Explore our comprehensive feature set.
+              Engineered for real underground mine scenarios — combining thermal imaging, LiDAR SLAM, multi-gas detection, 
+              and autonomous navigation in a single ruggedized platform.
             </p>
           </div>
         </section>
-
-
 
         {/* FEATURES GRID SECTION */}
         <section className="py-24 px-6 bg-white overflow-hidden relative">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Comprehensive Capabilities</h2>
-              <p className="text-gray-500">Every feature is designed to ensure maximum safety and reliability.</p>
+              <p className="text-gray-500">Every feature is designed for maximum safety and operational reliability in hazardous environments.</p>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10 pl-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Battery, Signal, Gauge, Thermometer, MapPin, Navigation } from "lucide-react";
+import { Battery, Signal, Gauge, Thermometer, MapPin, Navigation, Wind, Flame } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { telemetryHistory } from "@/lib/mock-data";
 import ScrollReveal from "./ScrollReveal";
@@ -8,10 +8,10 @@ import type { LucideIcon } from "lucide-react";
 
 const metrics: { icon: LucideIcon; label: string; value: string; color: string }[] = [
   { icon: Battery, label: "Battery", value: "78%", color: "text-orange-600" },
-  { icon: Signal, label: "Signal", value: "96%", color: "text-orange-600" },
-  { icon: Gauge, label: "Speed", value: "1.2 m/s", color: "text-purple-600" },
+  { icon: Signal, label: "Mesh Signal", value: "96%", color: "text-orange-600" },
   { icon: Thermometer, label: "Temperature", value: "31°C", color: "text-orange-600" },
-  { icon: MapPin, label: "Distance", value: "428 m", color: "text-gray-500" },
+  { icon: Flame, label: "Thermal", value: "Active", color: "text-red-600" },
+  { icon: Wind, label: "CH₄ Level", value: "0.3%", color: "text-green-600" },
   { icon: Navigation, label: "Heading", value: "142°", color: "text-gray-500" },
 ];
 
@@ -28,7 +28,7 @@ export default function TelemetryPreview() {
             <h2 className="text-4xl font-bold text-gray-900 mb-2">
               Everything the Rover Knows. <span className="text-orange-600">In Real Time.</span>
             </h2>
-            <p className="text-gray-500">Sample telemetry data — connect a rover for live streaming via TCP</p>
+            <p className="text-gray-500">Sample telemetry data — connect to the rover via Wi-Fi HaLow mesh for live streaming</p>
           </div>
         </ScrollReveal>
 
