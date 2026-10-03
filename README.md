@@ -28,7 +28,9 @@
 
 **MineX** is an edge-intelligent mining rover system purpose-built for hazardous underground environments. It combines real-time AI vision, environmental sensing, and a professional command center dashboard to enable safe, remote exploration of mine tunnels — without putting human operators at risk.
 
-The rover autonomously detects trapped personnel, monitors toxic gas concentrations, maps collapsed tunnel geometry via SLAM, and streams all data to a web-based command center in real time.
+The rover detects trapped personnel, monitors toxic gas concentrations, maps collapsed tunnel geometry via SLAM, and streams all data to a web-based command center in real time.
+
+> **Note:** The current hardware sensor suite (DHT22, MQ-135, MPU-6050, QMC5310) is prototype-level, selected for rapid iteration and proof of concept. Production deployments would use industrial-grade equivalents.
 
 ## Key Features
 
@@ -36,9 +38,9 @@ The rover autonomously detects trapped personnel, monitors toxic gas concentrati
 |---|---|
 | **AI Pose Detection** | YOLOv8-based skeletal pose estimation to detect standing, crouching, or fallen personnel underground |
 | **Live Camera Feed** | MJPEG video stream from ESP32-CAM with fullscreen mode and camera pan control |
-| **Environmental Sensing** | Real-time temperature, humidity (DHT22), and toxic gas monitoring (MQ-135) with threshold alerts |
+| **Environmental Sensing** | Real-time temperature, humidity (DHT22), and toxic gas monitoring (MQ-135) with threshold alerts — prototype-level sensors |
 | **3D SLAM Mapping** | Interactive 3D mine tunnel visualization with multi-level tunnels, patrol paths, and gas hotspot overlays |
-| **Motion & Orientation** | 6-axis IMU (MPU-6050) and digital compass (QMC5310) for heading, pitch, and roll tracking |
+| **Motion & Orientation** | 6-axis IMU (MPU-6050) and digital compass (QMC5310) for heading, pitch, and roll tracking — prototype-level sensors |
 | **Command Center** | Professional web dashboard with live telemetry charts, rover controls, alert center, and session logging |
 | **Session Recording** | Start/stop mission recording with timestamped telemetry for post-operation analysis |
 | **Fault-Tolerant Design** | Multi-threaded sensor architecture with automatic thread recovery and health monitoring |
@@ -79,6 +81,8 @@ The rover autonomously detects trapped personnel, monitors toxic gas concentrati
 ```
 
 ## Hardware
+
+> The following components represent the **prototype build**. Sensor modules are selected for rapid development and proof of concept.
 
 | Component | Purpose |
 |---|---|
