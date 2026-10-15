@@ -8,6 +8,7 @@
   <strong>Intelligent Rover. Safer Mines.</strong>
 </p>
 
+
 <p align="center">
   An autonomous, AI-powered rover and command center for underground mine safety, environmental monitoring, and rescue operations.
 </p>
